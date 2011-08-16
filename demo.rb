@@ -9,7 +9,7 @@ class Demo < Processing::App
 		@screen_height = 900
 		@width = width
 		@height = height
-		@screen_transform = SignedTransform.new({:x => 10, :y => -1}, {:x => 400, :y => @screen_height})
+		@screen_transform = SignedTransform.new({:x => 10, :y => -1}, {:x => 300, :y => @screen_height})
 		@screen = Screen.new(@screen_transform, self)
 		frame_rate(30)
 		smooth
@@ -20,8 +20,8 @@ class Demo < Processing::App
 
 		100.times {points << {:x => random(200), :y => random(300)}}
 
-		@x_unit_vector = {:x => 1.0, :y => 1.0}
-		@y_unit_vector = {:x => -1.0, :y => 1.0}
+		@x_unit_vector = {:x => 1.0, :y => 0.0}
+		@y_unit_vector = {:x => 0.0, :y => 1.0}
 
 		x_range = ContinuousRange.new({:minimum => 0, :maximum => 200})
 		y_range = ContinuousRange.new({:minimum => 0, :maximum => 300})
@@ -30,8 +30,8 @@ class Demo < Processing::App
 		@screen.draw_axes(@c,10,10)
 		stroke(1,1,0,1)
 		fill(1,1,0)
-		points.each do |bin|
-			@screen.plot(bin, @c)
+		points.each do |p|
+			@screen.plot(p, @c)
 		end
 	end
 	  
