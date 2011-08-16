@@ -1,20 +1,8 @@
 require 'ranges'
+require 'ruby-processing'
+require 'matrix_operations'
 
 include Math
-
-def into2Dx2D(first, second)
-	[
-		[second[0][0]*first[0][0] + second[1][0]*first[0][1], second[0][1]*first[0][0] + second[1][1]*first[0][1]],
-		[second[0][0]*first[1][0] + second[1][0]*first[1][1], second[0][1]*first[1][0] + second[1][1]*first[1][1]]
-	]
-end
-
-def into2Dx1D(transform, point)
-	{
-		:x => transform[0][0]*point[:x] + transform[0][1]*point[:y], 
-		:y => transform[1][0]*point[:x] + transform[1][1]*point[:y]
-	}
-end
 
 class Axis
 	attr_accessor :basis_vector, :range
@@ -25,7 +13,9 @@ class Axis
 end
 
 class CoordinateSystem
-	def initialize(x_axis, y_axis, transform)
+	include MatrixOperations
+	def initialize(x_axis, y_axis, transform, artist)
+		@artist = artist
 		@x_axis = x_axis
 		@y_axis = y_axis
 		@x_basis_vector = x_axis.basis_vector
@@ -44,14 +34,14 @@ class CoordinateSystem
 					[-@basis_matrix[1][0]/d, @basis_matrix[0][0]/d]
 				]
 
-		@standard_transform = into2Dx2D(into2Dx2D(@basis_matrix, @basis_transform), @inverse_basis)
+		@standard_transform = MatrixOperations::into2Dx2D(MatrixOperations::into2Dx2D(@basis_matrix, @basis_transform), @inverse_basis)
 	end
 
 	def tick_vectors
 		unnormalised_vectors =
 		{
-			:x_tick_vector => into2Dx1D(rotation(-90),@x_basis_vector),
-			:y_tick_vector => into2Dx1D(rotation(90),@y_basis_vector)
+			:x_tick_vector => MatrixOperations::into2Dx1D(rotation(-90),@x_basis_vector),
+			:y_tick_vector => MatrixOperations::into2Dx1D(rotation(90),@y_basis_vector)
 		}
 		{
 			:x_tick_vector => normal(unnormalised_vectors[:x_tick_vector]),
@@ -93,6 +83,32 @@ class CoordinateSystem
 		[[cos(radians), -sin(radians)],[sin(radians),cos(radians)]]
 	end
 
+	def draw_axes(screen_transform)
+		f = @artist.createFont("Georgia", 24, true);
+		@artist.text_font(f,16)
+		@artist.stroke(1,1,1,1)
+		axis_screen_transform = Transform.new({:x => 800, :y => -800}, screen_transform.origin)
+		origin = {:x => 0, :y => 0}
+		screen_origin = screen_transform.apply(origin)
+		x_basis_edge = axis_screen_transform.apply(@x_basis_vector)
+		y_basis_edge = axis_screen_transform.apply(@y_basis_vector)
+		@artist.line(screen_origin[:x],screen_origin[:y],x_basis_edge[:x],x_basis_edge[:y])
+		@artist.line(screen_origin[:x],screen_origin[:y],y_basis_edge[:x],y_basis_edge[:y])
+		
+		draw_ticks(x_ticks(4), screen_transform, {:x => 0, :y => 20})
+		draw_ticks(y_ticks(50), screen_transform, {:x => -50, :y => 0})
+	end
+
+	def draw_ticks(ticks, screen_transform, displacement)
+		ticks.each do |l|
+			from = screen_transform.apply(l[:from])
+			to = screen_transform.apply(l[:to])
+			@artist.line(from[:x],from[:y],to[:x],to[:y])
+			@artist.fill(1)
+			@artist.text(l[:label], to[:x]+displacement[:x], to[:y]+displacement[:y])
+		end
+	end
+
 	def standard_basis(point)
 		standard_point =
 		{
@@ -100,7 +116,7 @@ class CoordinateSystem
 			:y => @x_basis_vector[:y]*point[:x] + @y_basis_vector[:y]*point[:y]
 		}
 
-		into2Dx1D(@standard_transform, standard_point)
+		MatrixOperations::into2Dx1D(@standard_transform, standard_point)
 	end
 end
 
