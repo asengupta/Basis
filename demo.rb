@@ -8,8 +8,6 @@ class Demo < Processing::App
 	def setup
 		@width = width
 		@height = height
-		@screen_transform = SignedTransform.new({:x => 10, :y => -1}, {:x => 300, :y => 900})
-		@screen = Screen.new(@screen_transform, self)
 		frame_rate(30)
 		smooth
 		background(0,0,0)
@@ -26,6 +24,8 @@ class Demo < Processing::App
 		y_range = ContinuousRange.new({:minimum => 0, :maximum => 300})
 
 		@c = CoordinateSystem.new(Axis.new(@x_unit_vector,x_range), Axis.new(@y_unit_vector,y_range), [[4,0],[0,2]], self)
+		@screen_transform = SignedTransform.new({:x => 10, :y => -1}, {:x => 300, :y => 900})
+		@screen = Screen.new(@screen_transform, self)
 		@screen.draw_axes(@c,10,10)
 		stroke(1,1,0,1)
 		fill(1,1,0)
