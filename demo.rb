@@ -1,6 +1,7 @@
 require 'ranges'
 require 'transform'
 require 'coordinate_system'
+require 'screen'
 
 class Demo < Processing::App
 	app = self
@@ -9,6 +10,7 @@ class Demo < Processing::App
 		@width = width
 		@height = height
 		@screen_transform = SignedTransform.new({:x => 10, :y => -1}, {:x => 400, :y => @screen_height})
+		@screen = Screen.new(@screen_transform, self)
 		frame_rate(30)
 		smooth
 		background(0,0,0)
@@ -24,14 +26,12 @@ class Demo < Processing::App
 		x_range = ContinuousRange.new({:minimum => 0, :maximum => 200})
 		y_range = ContinuousRange.new({:minimum => 0, :maximum => 300})
 
-		@c = CoordinateSystem.new(Axis.new(@x_unit_vector,x_range), Axis.new(@y_unit_vector,y_range), [[2,0],[0,2]], self)
-		@c.draw_axes(@screen_transform)
+		@c = CoordinateSystem.new(Axis.new(@x_unit_vector,x_range), Axis.new(@y_unit_vector,y_range), [[4,0],[0,2]], self)
+		@screen.draw_axes(@c,10,10)
 		stroke(1,1,0,1)
 		fill(1,1,0)
 		points.each do |bin|
-			standard_point = @c.standard_basis(bin)
-			p = @screen_transform.apply(standard_point)
-			ellipse(p[:x], p[:y], 5, 5)
+			@screen.plot(bin, @c)
 		end
 	end
 	  
