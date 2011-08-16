@@ -6,10 +6,9 @@ require 'screen'
 class Demo < Processing::App
 	app = self
 	def setup
-		@screen_height = 900
 		@width = width
 		@height = height
-		@screen_transform = SignedTransform.new({:x => 10, :y => -1}, {:x => 300, :y => @screen_height})
+		@screen_transform = SignedTransform.new({:x => 10, :y => -1}, {:x => 300, :y => 900})
 		@screen = Screen.new(@screen_transform, self)
 		frame_rate(30)
 		smooth
