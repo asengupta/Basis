@@ -9,6 +9,7 @@ class Demo < Processing::App
 		smooth
 		background(0,0,0)
 		color_mode(RGB, 1.0)
+		stroke(1,1,0,1)
 
 		points = []
 		100.times {points << {:x => random(200), :y => random(300)}}
