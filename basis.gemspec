@@ -6,7 +6,7 @@ spec = Gem::Specification.new do |s|
   s.homepage = "http://avishek.net/blog"
   s.platform = Gem::Platform::RUBY
   s.summary = "Some description"
-  s.files = ['transform.rb', 'ranges.rb', 'coordinate_system.rb', 'matrix_operations.rb', 'screen.rb', 'basis-processing.rb']
+  s.files = ['transform.rb', 'ranges.rb', 'coordinate_system.rb', 'matrix_operations.rb', 'screen.rb', 'basis_processing.rb']
   s.summary = %q{Basis provides a set of classes for easily plotting and transforming arbitrary 2D coordinate systems by specifying their basis vectors in Ruby-Processing.}
   s.description = %q{Basis provides a set of classes for easily plotting and transforming arbitrary 2D coordinate systems by specifying their basis vectors in Ruby-Processing.}
 end
