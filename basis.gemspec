@@ -1,5 +1,5 @@
 spec = Gem::Specification.new do |s| 
-  s.name = "basis"
+  s.name = "basis-processing"
   s.version = "0.1"
   s.author = "Avishek Sen Gupta"
   s.email = "avishek.sen.gupta@gmail.com"
