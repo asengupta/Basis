@@ -14,8 +14,8 @@ class Screen
 
 	def draw_ticks(ticks, displacement)
 		ticks.each do |l|
-			from = @transform.apply(l[:from])
-			to = @transform.apply(l[:to])
+			from = @transform.signed.apply(l[:from])
+			to = @transform.signed.apply(l[:to])
 			@artist.line(from[:x],from[:y],to[:x],to[:y])
 			@artist.fill(1)
 			@artist.text(l[:label], to[:x]+displacement[:x], to[:y]+displacement[:y])
