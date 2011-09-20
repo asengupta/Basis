@@ -40,20 +40,10 @@ class CoordinateSystem
 	end
 
 	def tick_vectors
-		unnormalised_vectors =
 		{
 			:x_tick_vector => MatrixOperations::into2Dx1D(rotation(-90),@x_basis_vector),
 			:y_tick_vector => MatrixOperations::into2Dx1D(rotation(90),@y_basis_vector)
 		}
-		{
-			:x_tick_vector => normal(unnormalised_vectors[:x_tick_vector]),
-			:y_tick_vector => normal(unnormalised_vectors[:y_tick_vector])
-		}
-	end
-
-	def normal(vector)
-		magnitude = sqrt(vector[:x]**2 + vector[:y]**2)
-		{:x => 5*vector[:x]/magnitude, :y => 5*vector[:y]/magnitude}
 	end
 
 	def sum(v1, v2)

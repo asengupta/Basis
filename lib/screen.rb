@@ -14,12 +14,20 @@ class Screen
 
 	def draw_ticks(ticks, displacement)
 		ticks.each do |l|
-			from = @transform.signed.apply(l[:from])
-			to = @transform.signed.apply(l[:to])
+			from = @transform.apply(l[:from])
+			to = @transform.apply(l[:to])
+			tick_vector = normal(from, to)
+			to = {:x => from[:x] + tick_vector[:x], :y => from[:y] + tick_vector[:y]}
 			@artist.line(from[:x],from[:y],to[:x],to[:y])
 			@artist.fill(1)
 			@artist.text(l[:label], to[:x]+displacement[:x], to[:y]+displacement[:y])
 		end
+	end
+
+	def normal(from, to)
+		vector = {:x => to[:x] - from[:x], :y => to[:y] - from[:y]}
+		magnitude = sqrt(vector[:x]**2 + vector[:y]**2)
+		{:x => 5*vector[:x]/magnitude, :y => 5*vector[:y]/magnitude}
 	end
 
 	def draw_axes(basis, x_interval, y_interval)
