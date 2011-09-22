@@ -6,10 +6,14 @@ class Screen
 		@artist = artist
 	end
 
-	def plot(point, basis)
+	def plot(point, basis, &block)
 		standard_point = basis.standard_basis(point)
 		p = @transform.apply(standard_point)
-		@artist.ellipse(p[:x], p[:y], 5, 5)
+		if (block)
+			block.call(p)
+		else
+			@artist.ellipse(p[:x], p[:y], 5, 5)
+		end
 	end
 
 	def draw_ticks(ticks, displacement)
