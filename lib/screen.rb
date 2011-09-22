@@ -16,6 +16,11 @@ class Screen
 		end
 	end
 
+	def original(onscreen_point, basis)
+		p = @transform.unapply(onscreen_point)
+		basis.original(p)
+	end
+
 	def draw_ticks(ticks, displacement)
 		ticks.each do |l|
 			from = @transform.apply(l[:from])

@@ -77,13 +77,24 @@ class CoordinateSystem
 
 
 	def standard_basis(point)
-		standard_point =
-		{
-			:x => @x_basis_vector[:x]*point[:x] + @y_basis_vector[:x]*point[:y], 
-			:y => @x_basis_vector[:y]*point[:x] + @y_basis_vector[:y]*point[:y]
-		}
+		basis_matrix =
+		[
+			[@x_basis_vector[:x], @y_basis_vector[:x]],
+			[@x_basis_vector[:y], @y_basis_vector[:y]]
+		]
+		standard_point = MatrixOperations::into2Dx1D(basis_matrix, point)
 
 		MatrixOperations::into2Dx1D(@standard_transform, standard_point)
+	end
+
+	def original(onscreen_point)
+		p1 = MatrixOperations::into2Dx1D(MatrixOperations::inverse2D(@standard_transform), onscreen_point)
+		basis_matrix =
+		[
+			[@x_basis_vector[:x], @y_basis_vector[:x]],
+			[@x_basis_vector[:y], @y_basis_vector[:y]]
+		]
+		MatrixOperations::into2Dx1D(MatrixOperations::inverse2D(basis_matrix), p1)
 	end
 end
 

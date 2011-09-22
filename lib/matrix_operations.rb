@@ -12,5 +12,13 @@ module MatrixOperations
 			:y => transform[1][0]*point[:x] + transform[1][1]*point[:y]
 		}
 	end
+
+	def MatrixOperations.inverse2D(m)
+		determinant = (m[0][0]*m[1][1] - m[0][1]*m[1][0]).to_f;
+		[
+			[m[1][1]/determinant, -m[0][1]/determinant],
+			[-m[1][0]/determinant, m[0][0]/determinant]
+		]
+	end
 end
 
