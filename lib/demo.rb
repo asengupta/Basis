@@ -14,7 +14,7 @@ class Demo < Processing::App
 		stroke(1,1,0,1)
 
 		points = []
-		100.times {points << {:x => random(200), :y => random(300)}}
+		200.times {|n|points << {:x => n, :y => random(300)}}
 
 		x_basis_vector = {:x => 1.0, :y => 0.0}
 		y_basis_vector = {:x => 0.0, :y => 1.0}
@@ -28,8 +28,9 @@ class Demo < Processing::App
 		screen.draw_axes(basis,10,10)
 		stroke(1,1,0,1)
 		fill(1,1,0)
+		rect_mode(CENTER)
 		points.each do |p|
-			screen.plot(p, basis)
+			screen.plot(p, basis, :bar => true) {|p| rect(p[:x], p[:y], 5, 5)}
 		end
 	end
 	  
