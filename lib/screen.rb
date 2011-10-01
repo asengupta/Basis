@@ -26,8 +26,8 @@ class Screen
 
 	def draw_ticks(ticks, displacement)
 		ticks.each do |l|
-			from = @transform.apply(l[:from])
-			to = @transform.apply(l[:to])
+			from = l[:from]
+			to = l[:to]
 			tick_vector = normal(from, to)
 			to = {:x => from[:x] + tick_vector[:x], :y => from[:y] + tick_vector[:y]}
 			@artist.line(from[:x],from[:y],to[:x],to[:y])
@@ -51,11 +51,18 @@ class Screen
 		screen_origin = @transform.apply(origin)
 		x_basis_edge = axis_screen_transform.apply(basis.x_basis_vector)
 		y_basis_edge = axis_screen_transform.apply(basis.y_basis_vector)
-		@artist.line(screen_origin[:x],screen_origin[:y],x_basis_edge[:x],x_basis_edge[:y])
-		@artist.line(screen_origin[:x],screen_origin[:y],y_basis_edge[:x],y_basis_edge[:y])
 
-		draw_ticks(basis.x_ticks(x_interval), {:x => 0, :y => 20})
-		draw_ticks(basis.y_ticks(y_interval), {:x => -50, :y => 0})
+		x_ticks = basis.x_ticks(x_interval)
+		y_ticks = basis.y_ticks(y_interval)
+
+		x_ticks = x_ticks.collect {|t| {:from => @transform.apply(t[:from]), :to => @transform.apply(t[:to]), :label => t[:label]}}
+		y_ticks = y_ticks.collect {|t| {:from => @transform.apply(t[:from]), :to => @transform.apply(t[:to]), :label => t[:label]}}
+
+		@artist.line(x_ticks.first[:from][:x],x_ticks.first[:from][:y],x_ticks.last[:from][:x],x_ticks.last[:from][:y])
+		@artist.line(y_ticks.first[:from][:x],y_ticks.first[:from][:y],y_ticks.last[:from][:x],y_ticks.last[:from][:y])
+
+		draw_ticks(x_ticks, {:x => 0, :y => 20})
+		draw_ticks(y_ticks, {:x => -50, :y => 0})
 	end
 end
 

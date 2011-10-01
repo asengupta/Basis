@@ -1,6 +1,6 @@
 spec = Gem::Specification.new do |s| 
   s.name = "basis-processing"
-  s.version = "0.4.7"
+  s.version = "0.4.8"
   s.author = "Avishek Sen Gupta"
   s.email = "avishek.sen.gupta@gmail.com"
   s.homepage = "http://avishek.net/blog"
