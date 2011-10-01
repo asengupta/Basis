@@ -6,14 +6,17 @@ class Screen
 		@artist = artist
 	end
 
-	def plot(point, basis, &block)
+	def plot(point, basis, options = {:bar => false}, &block)
 		standard_point = basis.standard_basis(point)
 		p = @transform.apply(standard_point)
+
+		standard_x_axis_point = @transform.apply(basis.standard_basis({:x => point[:x], :y => 0}))
 		if (block)
 			block.call(p)
 		else
 			@artist.ellipse(p[:x], p[:y], 5, 5)
 		end
+		@artist.line(standard_x_axis_point[:x], standard_x_axis_point[:y], p[:x], p[:y]) if options[:bar]
 	end
 
 	def original(onscreen_point, basis)
