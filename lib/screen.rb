@@ -1,9 +1,15 @@
 require 'transform'
 
 class Screen
+	def join=(should_join)
+		@should_join = should_join
+		@buffer = nil if !@should_join
+	end
+	
 	def initialize(transform, artist)
 		@transform = transform
 		@artist = artist
+		join = false
 	end
 
 	def plot(point, basis, options = {:bar => false}, &block)
@@ -17,6 +23,9 @@ class Screen
 			@artist.ellipse(p[:x], p[:y], 5, 5)
 		end
 		@artist.line(standard_x_axis_point[:x], standard_x_axis_point[:y], p[:x], p[:y]) if options[:bar]
+		return if !@should_join
+		@artist.line(@buffer[:x], @buffer[:y], p[:x], p[:y]) if @buffer
+		@buffer = p
 	end
 
 	def original(onscreen_point, basis)

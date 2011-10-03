@@ -40,6 +40,7 @@ Here's some example code, which plots random points.
         basis = CoordinateSystem.new(Axis.new(x_basis_vector,x_range), Axis.new(y_basis_vector,y_range), [[4,0],[0,2]], self)
         screen_transform = SignedTransform.new({:x => 1, :y => -1}, {:x => 300, :y => 900})
         screen = Screen.new(screen_transform, self)
+        screen.join = true
         screen.draw_axes(basis,10,10)
         stroke(1,1,0,1)
         fill(1,1,0)
@@ -64,4 +65,5 @@ You have a few options when plotting a point. Consider the line:
 
 If you omit `:bar => true` or don't specify any options, Basis will plot the points without connecting them to the X-axis.
 If you omit the block at the end of the call, Basis will plot the point using a circle. Use the block to customise how you wish to represent the point graphically.
+You can toggle the joining of the points with lines by setting the join attribute of Screen to on (joins points)/off (no joining). The default is false.
 
