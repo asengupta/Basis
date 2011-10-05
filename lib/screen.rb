@@ -54,7 +54,6 @@ class Screen
 	def draw_axes(basis, x_interval, y_interval)
 		f = @artist.createFont("Georgia", 24, true);
 		@artist.text_font(f,16)
-		@artist.stroke(1,1,1,1)
 		axis_screen_transform = Transform.new({:x => 800, :y => -800}, @transform.origin)
 		origin = {:x => 0, :y => 0}
 		screen_origin = @transform.apply(origin)
