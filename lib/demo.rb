@@ -6,8 +6,8 @@ ENV['GEM_PATH'] = '/home/avishek/jruby/jruby-1.6.3/lib/ruby/gems/1.8'
 require 'basis_processing'
 
 class Demo < Processing::App
-	app = self
 	include Interactive
+	app = self
 	def setup
 		smooth
 		background(0,0,0)
@@ -45,7 +45,7 @@ class Demo < Processing::App
 		fill(1,1,0)
 		rect_mode(CENTER)
 		points.each do |p|
-			@screen.plot(p) {|p| rect(p[:x], p[:y], 5, 5)}
+			@screen.plot(p, :track => true) {|p| rect(p[:x], p[:y], 5, 5)}
 		end
 	end
 end
