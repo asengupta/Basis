@@ -16,11 +16,9 @@ class Screen
 		@points = []
 	end
 
-	def plot(point, options = {:bar => false}, &block)
-		@points << point
-		standard_point = @basis.standard_basis(point)
-		p = @transform.apply(standard_point)
-
+	def plot(point, options = {:bar => false, :track => false}, &block)
+		@points << point if options[:track]
+		p = transformed(point)
 		standard_x_axis_point = @transform.apply(@basis.standard_basis({:x => point[:x], :y => 0}))
 		if (block)
 			block.call(p)
@@ -33,6 +31,11 @@ class Screen
 		@buffer = p
 	end
 
+	def transformed(data_point)
+		standard_point = @basis.standard_basis(data_point)
+		@transform.apply(standard_point)
+	end
+	
 	def original(onscreen_point)
 		p = @transform.unapply(onscreen_point)
 		@basis.original(p)

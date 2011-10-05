@@ -5,4 +5,3 @@ require 'coordinate_system.rb'
 require 'screen.rb'
 require 'interactive'
 
-puts "LoLAgain"

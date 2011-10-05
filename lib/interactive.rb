@@ -5,9 +5,10 @@ module Interactive
 		p = {:x => p.getX(), :y => p.getY()}
 		@old_points ||= []
 		@points_to_highlight = []
-		original_point = @screen.original(p)
-		original_point = {:x => original_point[:x], :y => original_point[:y]}
-		index = @screen.points.index {|i| (i[:x] - original_point[:x]).abs < 1.0 && (i[:y] - original_point[:y]).abs < 1.0}
+		index = @screen.points.index do |i|
+			onscreen_point = @screen.transformed(i)
+			(p[:x] - onscreen_point[:x]).abs < 4.0 && (p[:y] - onscreen_point[:y]).abs < 4.0
+		end
 		return if index == nil
 		@points_to_highlight = [{:x => @screen.points[index][:x], :y => @screen.points[index][:y]}]
 		redraw
