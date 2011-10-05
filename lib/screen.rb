@@ -1,6 +1,8 @@
 require 'transform'
 
 class Screen
+	attr_accessor :points
+
 	def join=(should_join)
 		@should_join = should_join
 		@buffer = nil if !@should_join
@@ -11,9 +13,11 @@ class Screen
 		@artist = artist
 		@basis = basis
 		join = false
+		@points = []
 	end
 
 	def plot(point, options = {:bar => false}, &block)
+		@points << point
 		standard_point = @basis.standard_basis(point)
 		p = @transform.apply(standard_point)
 

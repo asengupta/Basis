@@ -7,11 +7,25 @@ require 'basis_processing'
 
 class Demo < Processing::App
 	app = self
+	include Interactive
 	def setup
-#		smooth
+		smooth
 		background(0,0,0)
 		color_mode(RGB, 1.0)
 		stroke(1,1,0,1)
+		@highlight_block = lambda do |p|
+					rect_mode(CENTER)
+					stroke(1,0,0)
+					fill(1,0,0)
+					rect(p[:x], p[:y], 5, 5)
+				   end
+
+		@passive_block = lambda do |p|
+					rect_mode(CENTER)
+					stroke(1,1,0,1)
+					fill(1,1,0)
+					rect(p[:x], p[:y], 5, 5)
+				   end
 
 		points = []
 		200.times {|n|points << {:x => n, :y => random(300)}}
@@ -22,16 +36,16 @@ class Demo < Processing::App
 		x_range = ContinuousRange.new({:minimum => 0, :maximum => 200})
 		y_range = ContinuousRange.new({:minimum => 0, :maximum => 300})
 
-		basis = CoordinateSystem.new(Axis.new(x_basis_vector,x_range), Axis.new(y_basis_vector,y_range), [[4,0],[0,2]], self)
+		@basis = CoordinateSystem.new(Axis.new(x_basis_vector,x_range), Axis.new(y_basis_vector,y_range), [[4,0],[0,2]], self)
 		screen_transform = SignedTransform.new({:x => 1, :y => -1}, {:x => 300, :y => 900})
-		screen = Screen.new(screen_transform, self, basis)
-		screen.join=true
-		screen.draw_axes(10,10)
+		@screen = Screen.new(screen_transform, self, @basis)
+		@screen.join=true
+		@screen.draw_axes(10,10)
 		stroke(1,1,0,1)
 		fill(1,1,0)
 		rect_mode(CENTER)
 		points.each do |p|
-			screen.plot(p) {|p| rect(p[:x], p[:y], 5, 5)}
+			@screen.plot(p) {|p| rect(p[:x], p[:y], 5, 5)}
 		end
 	end
 end
