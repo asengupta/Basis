@@ -18,52 +18,74 @@ To use Basis functionality in your code, it is enough to:
 
 Here's some example code, which plots random points.
 
-    require 'rubygems'`
-    require 'basis_processing'`
+	require 'rubygems'
+	Gem.clear_paths
+	ENV['GEM_HOME'] = '/home/avishek/jruby/jruby-1.6.3/lib/ruby/gems/1.8'
+	ENV['GEM_PATH'] = '/home/avishek/jruby/jruby-1.6.3/lib/ruby/gems/1.8'
 
-    class Demo < Processing::App
-    app = self
-    def setup
-        smooth
-        background(0,0,0)
-        color_mode(RGB, 1.0)
- 
-        points = []
-        100.times {points << {:x => random(200), :y => random(300)}}
- 
-        x_basis_vector = {:x => 1.0, :y => 0.0}
-        y_basis_vector = {:x => 0.0, :y => 1.0}
- 
-        x_range = ContinuousRange.new({:minimum => 0, :maximum => 200})
-        y_range = ContinuousRange.new({:minimum => 0, :maximum => 300})
- 
-        basis = CoordinateSystem.new(Axis.new(x_basis_vector,x_range), Axis.new(y_basis_vector,y_range), [[4,0],[0,2]], self)
-        screen_transform = SignedTransform.new({:x => 1, :y => -1}, {:x => 300, :y => 900})
-        screen = Screen.new(screen_transform, self)
-        screen.join = true
-        screen.draw_axes(basis,10,10)
-        stroke(1,1,0,1)
-        fill(1,1,0)
-        rect_mode(CENTER)
-        points.each do |p|
-                screen.plot(p, basis, :bar => true) {|p| rect(p[:x], p[:y], 5, 5)}
-        end
-    end
- 
-    def draw
-    end
-    end
- 
-    w = 1200
-    h = 1000
- 
-    Demo.new(:title => "My Sketch", :width => w, :height => h)
+	require 'basis_processing'
 
-You have a few options when plotting a point. Consider the line:
+	class Demo < Processing::App
+		include Interactive
+		app = self
+		def setup
+			smooth
+			background(0,0,0)
+			color_mode(RGB, 1.0)
+			stroke(1,1,0,1)
+			@highlight_block = lambda do |p|
+						rect_mode(CENTER)
+						stroke(1,0,0)
+						fill(1,0,0)
+						rect(p[:x], p[:y], 5, 5)
+					   end
+
+			@passive_block = lambda do |p|
+						rect_mode(CENTER)
+						stroke(1,1,0,1)
+						fill(1,1,0)
+						rect(p[:x], p[:y], 5, 5)
+					   end
+
+			points = []
+			200.times {|n|points << {:x => n, :y => random(300)}}
+
+			x_basis_vector = {:x => 1.0, :y => 0.0}
+			y_basis_vector = {:x => 0.0, :y => 1.0}
+
+			x_range = ContinuousRange.new({:minimum => 0, :maximum => 200})
+			y_range = ContinuousRange.new({:minimum => 0, :maximum => 300})
+
+			@basis = CoordinateSystem.new(Axis.new(x_basis_vector,x_range), Axis.new(y_basis_vector,y_range), [[4,0],[0,2]], self)
+			screen_transform = SignedTransform.new({:x => 1, :y => -1}, {:x => 300, :y => 900})
+			@screen = Screen.new(screen_transform, self, @basis)
+			@screen.join=true
+			@screen.draw_axes(10,10)
+			stroke(1,1,0,1)
+			fill(1,1,0)
+			rect_mode(CENTER)
+			points.each do |p|
+				@screen.plot(p, :track => true) {|p| rect(p[:x], p[:y], 5, 5)}
+			end
+		end
+	end
+
+	w = 1200
+	h = 1000
+
+	Demo.new(:title => "My Sketch", :width => w, :height => h)
+
+You have a few options when plotting a point. If you specify ':bar => true', like the line below:
 
 	screen.plot(p, basis, :bar => true) {|p| rect(p[:x], p[:y], 5, 5)}
 
-If you omit `:bar => true` or don't specify any options, Basis will plot the points without connecting them to the X-axis.
+it will connect the point with the x-axis. If you omit `:bar => true` or don't specify any options, Basis will plot the points without connecting them to the X-axis.
 If you omit the block at the end of the call, Basis will plot the point using a circle. Use the block to customise how you wish to represent the point graphically.
 You can toggle the joining of the points with lines by setting the join attribute of Screen to on (joins points)/off (no joining). The default is false.
+
+Version 0.5.0 introduces experimental support for mouseover interactivity without extra effort on your part. To allow interactions to happen, you must specify ':track => true' while plotting a point, as in the line below:
+
+	@screen.plot(p, :track => true) {|p| rect(p[:x], p[:y], 5, 5)}
+
+To actually enable interactivity, you must 'include' the Interactive module in your sketch class, as in the demonstration code above. Interactivity is a work in progress at the moment.
 
