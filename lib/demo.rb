@@ -24,18 +24,15 @@ class Demo < Processing::App
 
 		basis = CoordinateSystem.new(Axis.new(x_basis_vector,x_range), Axis.new(y_basis_vector,y_range), [[4,0],[0,2]], self)
 		screen_transform = SignedTransform.new({:x => 1, :y => -1}, {:x => 300, :y => 900})
-		screen = Screen.new(screen_transform, self)
+		screen = Screen.new(screen_transform, self, basis)
 		screen.join=true
-		screen.draw_axes(basis,10,10)
+		screen.draw_axes(10,10)
 		stroke(1,1,0,1)
 		fill(1,1,0)
 		rect_mode(CENTER)
 		points.each do |p|
-			screen.plot(p, basis) {|p| rect(p[:x], p[:y], 5, 5)}
+			screen.plot(p) {|p| rect(p[:x], p[:y], 5, 5)}
 		end
-	end
-	  
-	def draw
 	end
 end
 

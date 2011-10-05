@@ -6,17 +6,18 @@ class Screen
 		@buffer = nil if !@should_join
 	end
 	
-	def initialize(transform, artist)
+	def initialize(transform, artist, basis)
 		@transform = transform
 		@artist = artist
+		@basis = basis
 		join = false
 	end
 
-	def plot(point, basis, options = {:bar => false}, &block)
-		standard_point = basis.standard_basis(point)
+	def plot(point, options = {:bar => false}, &block)
+		standard_point = @basis.standard_basis(point)
 		p = @transform.apply(standard_point)
 
-		standard_x_axis_point = @transform.apply(basis.standard_basis({:x => point[:x], :y => 0}))
+		standard_x_axis_point = @transform.apply(@basis.standard_basis({:x => point[:x], :y => 0}))
 		if (block)
 			block.call(p)
 		else
@@ -28,9 +29,9 @@ class Screen
 		@buffer = p
 	end
 
-	def original(onscreen_point, basis)
+	def original(onscreen_point)
 		p = @transform.unapply(onscreen_point)
-		basis.original(p)
+		@basis.original(p)
 	end
 
 	def draw_ticks(ticks, displacement)
@@ -51,17 +52,17 @@ class Screen
 		{:x => 5*vector[:x]/magnitude, :y => 5*vector[:y]/magnitude}
 	end
 
-	def draw_axes(basis, x_interval, y_interval)
+	def draw_axes(x_interval, y_interval)
 		f = @artist.createFont("Georgia", 24, true);
 		@artist.text_font(f,16)
 		axis_screen_transform = Transform.new({:x => 800, :y => -800}, @transform.origin)
 		origin = {:x => 0, :y => 0}
 		screen_origin = @transform.apply(origin)
-		x_basis_edge = axis_screen_transform.apply(basis.x_basis_vector)
-		y_basis_edge = axis_screen_transform.apply(basis.y_basis_vector)
+		x_basis_edge = axis_screen_transform.apply(@basis.x_basis_vector)
+		y_basis_edge = axis_screen_transform.apply(@basis.y_basis_vector)
 
-		x_ticks = basis.x_ticks(x_interval)
-		y_ticks = basis.y_ticks(y_interval)
+		x_ticks = @basis.x_ticks(x_interval)
+		y_ticks = @basis.y_ticks(y_interval)
 
 		x_ticks = x_ticks.collect {|t| {:from => @transform.apply(t[:from]), :to => @transform.apply(t[:to]), :label => t[:label]}}
 		y_ticks = y_ticks.collect {|t| {:from => @transform.apply(t[:from]), :to => @transform.apply(t[:to]), :label => t[:label]}}
