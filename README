@@ -1,4 +1,8 @@
-Basis provides a set of classes for easily plotting and transforming arbitrary 2D coordinate systems by specifying their basis vectors in Ruby-Processing.
+**NOTE: Starting from version 0.5.1, Basis has been ported to Ruby 1.9.2, because of the kd-tree library dependency. There are no current plans of maintaining Basis compatibility with Ruby 1.8.x.**
+
+**Basis** provides a set of classes for easily plotting and transforming arbitrary 2D coordinate systems by specifying their basis vectors. Originally developed to work with Ruby-Processing, it now supports any class which supports Processing-like semantics.
+
+Starting from version 0.5.0, experimental support has been added for mouseover interactivity without (too much) extra effort on your part. This is still a work in progress, though.
 
 ## Installation
 
@@ -17,11 +21,6 @@ To use Basis functionality in your code, it is enough to:
 ## Example Code
 
 Here's some example code, which plots random points.
-
-	require 'rubygems'
-	Gem.clear_paths
-	ENV['GEM_HOME'] = '/home/avishek/jruby/jruby-1.6.3/lib/ruby/gems/1.8'
-	ENV['GEM_PATH'] = '/home/avishek/jruby/jruby-1.6.3/lib/ruby/gems/1.8'
 
 	require 'basis_processing'
 
@@ -67,6 +66,7 @@ Here's some example code, which plots random points.
 			points.each do |p|
 				@screen.plot(p, :track => true) {|p| rect(p[:x], p[:y], 5, 5)}
 			end
+			@index = @screen.build
 		end
 	end
 
@@ -83,9 +83,34 @@ it will connect the point with the x-axis. If you omit `:bar => true` or don't s
 If you omit the block at the end of the call, Basis will plot the point using a circle. Use the block to customise how you wish to represent the point graphically.
 You can toggle the joining of the points with lines by setting the join attribute of Screen to on (joins points)/off (no joining). The default is false.
 
-Version 0.5.0 introduces experimental support for mouseover interactivity without extra effort on your part. To allow interactions to happen, you must specify ':track => true' while plotting a point, as in the line below:
+## Running the Code (with extra notes for versions >= 0.5.1)
+
+Running the code is as simple as typing:
+
+`rp5 run demo.rb`
+
+If you're not using the Gems-in-a-Jar approach, you might have to use:
+
+`rp5 run --jruby demo.rb`
+
+The reason for the `--jruby` switch is to force Ruby-Processing to use the installed version of JRuby, instead of it's own jruby-complete.jar
+
+Additionally, starting with version 0.5.1, you will have to specify the environment variable JRUBY_OPTS to force JRuby to use the 1.9 version of the interpreter, like so:
+
+`export JRUBY_OPTS=--1.9`
+
+## Notes on Interactivity
+
+Experimental support exists for mouseover interactivity without (too much) extra effort on your part. To allow interactions to happen, you must specify ':track => true' while plotting a point, as in the line below:
 
 	@screen.plot(p, :track => true) {|p| rect(p[:x], p[:y], 5, 5)}
 
-To actually enable interactivity, you must 'include' the Interactive module in your sketch class, as in the demonstration code above. Interactivity is a work in progress at the moment.
+To actually enable interactivity, you must do a few things:
+
+* 'include' the Interactive module in your sketch class, as in the demonstration code above.
+* Build the data sample index from the data, by calling `@index = @screen.build`.
+* `@highlight_block` specifies what to plot when the data point is hovered upon.
+* `@passive_block` specifies what to plot when the data point is **not** being hovered on.
+
+Interactivity is a work in progress at the moment; some of the above steps may change or be removed.
 
