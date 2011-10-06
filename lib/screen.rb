@@ -1,4 +1,5 @@
 require 'transform'
+require 'knnball'
 
 class Screen
 	attr_accessor :points
@@ -14,10 +15,16 @@ class Screen
 		@basis = basis
 		join = false
 		@points = []
+		@data = []
+	end
+
+	def build
+		KnnBall.build(@data)
 	end
 
 	def plot(point, options = {:bar => false, :track => false}, &block)
 		@points << point if options[:track]
+		@data << {:id => @points.count - 1, :point => [point[:x], point[:y]]}
 		p = transformed(point)
 		standard_x_axis_point = @transform.apply(@basis.standard_basis({:x => point[:x], :y => 0}))
 		if (block)

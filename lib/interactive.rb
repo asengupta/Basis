@@ -1,16 +1,20 @@
 module Interactive
-	attr :screen, :basis
+	attr :screen, :basis, :index
 
 	def mouseMoved(p)
 		p = {:x => p.getX(), :y => p.getY()}
 		@old_points ||= []
-		@points_to_highlight = []
-		index = @screen.points.index do |i|
-			onscreen_point = @screen.transformed(i)
-			(p[:x] - onscreen_point[:x]).abs < 4.0 && (p[:y] - onscreen_point[:y]).abs < 4.0
+		@points_to_highlight ||= []
+		original_point = @screen.original(p)
+		closest_point = @index.nearest([original_point[:x], original_point[:y]])
+		closest = @screen.points[closest_point[:id]]
+		distance = (closest[:x] - original_point[:x])**2 + (closest[:y] - original_point[:y])**2
+		if distance > 1.0
+			@points_to_highlight = []
+			redraw
+			return
 		end
-		return if index == nil
-		@points_to_highlight = [{:x => @screen.points[index][:x], :y => @screen.points[index][:y]}]
+		@points_to_highlight = [closest]
 		redraw
 	end
 
