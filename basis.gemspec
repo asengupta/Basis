@@ -1,6 +1,7 @@
 spec = Gem::Specification.new do |s| 
   s.name = "basis-processing"
   s.version = "0.5.1"
+  s.add_dependency('knnball', '>= 0.0.6')
   s.author = "Avishek Sen Gupta"
   s.email = "avishek.sen.gupta@gmail.com"
   s.homepage = "http://avishek.net/blog"
