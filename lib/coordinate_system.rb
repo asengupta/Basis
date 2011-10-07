@@ -1,6 +1,7 @@
 require 'ranges'
 require 'ruby-processing'
 require 'matrix_operations'
+require 'hash_vector'
 
 include Math
 
@@ -47,7 +48,8 @@ class CoordinateSystem
 	end
 
 	def sum(v1, v2)
-		{:x => v1[:x] + v2[:x], :y => v1[:y] + v2[:y]}
+		v1 + v2
+#		{:x => v1[:x] + v2[:x], :y => v1[:y] + v2[:y]}
 	end
 
 	def x_ticks(x_basis_interval)
@@ -95,6 +97,14 @@ class CoordinateSystem
 			[@x_basis_vector[:y], @y_basis_vector[:y]]
 		]
 		MatrixOperations::into2Dx1D(MatrixOperations::inverse2D(basis_matrix), p1)
+	end
+	
+	def crosshairs(p)
+		crosshair_x_p1 = (@x_basis_vector*5000 + p)
+		crosshair_x_p2 = (@x_basis_vector*(-5000) + p)
+		crosshair_y_p1 = (@y_basis_vector*5000 + p)
+		crosshair_y_p2 = (@y_basis_vector*(-5000) + p)
+		[{:from => crosshair_x_p1, :to => crosshair_x_p2}, {:from => crosshair_y_p1, :to => crosshair_y_p2}]
 	end
 end
 

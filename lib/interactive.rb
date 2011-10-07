@@ -42,6 +42,7 @@ module Interactive
 #		end
 		@points_to_highlight.each do |new_rectangle|
 			@screen.plot(new_rectangle) {|p| @highlight_block.call(p) if @highlight_block}
+			@screen.draw_crosshairs(new_rectangle)
 		end
 		@old_points = @points_to_highlight
 	end
