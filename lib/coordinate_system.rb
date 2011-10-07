@@ -14,6 +14,7 @@ class Axis
 end
 
 class CoordinateSystem
+	CROSSHAIR_SCALE = 5000
 	include MatrixOperations
 	attr_accessor :x_basis_vector, :y_basis_vector
 
@@ -100,10 +101,10 @@ class CoordinateSystem
 	end
 	
 	def crosshairs(p)
-		crosshair_x_p1 = (@x_basis_vector*5000 + p)
-		crosshair_x_p2 = (@x_basis_vector*(-5000) + p)
-		crosshair_y_p1 = (@y_basis_vector*5000 + p)
-		crosshair_y_p2 = (@y_basis_vector*(-5000) + p)
+		crosshair_x_p1 = (@x_basis_vector*CROSSHAIR_SCALE) + standard_basis(p)
+		crosshair_x_p2 = (@x_basis_vector*(-CROSSHAIR_SCALE)) + standard_basis(p)
+		crosshair_y_p1 = (@y_basis_vector*CROSSHAIR_SCALE) + standard_basis(p)
+		crosshair_y_p2 = (@y_basis_vector*(-CROSSHAIR_SCALE)) + standard_basis(p)
 		[{:from => crosshair_x_p1, :to => crosshair_x_p2}, {:from => crosshair_y_p1, :to => crosshair_y_p2}]
 	end
 end

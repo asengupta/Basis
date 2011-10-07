@@ -24,8 +24,8 @@ class Screen
 
 	def draw_crosshairs(p)
 		@basis.crosshairs(p).each do |hair|
-			from = transformed(hair[:from])
-			to = transformed(hair[:to])
+			from = @transform.apply(hair[:from])
+			to = @transform.apply(hair[:to])
 			@artist.line(from[:x], from[:y], to[:x], to[:y])
 		end
 	end
