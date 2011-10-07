@@ -40,7 +40,6 @@ class Demo < Processing::App
 		@basis = CoordinateSystem.new(Axis.new(x_basis_vector,x_range), Axis.new(y_basis_vector,y_range), [[1,0],[0,1]], self)
 		screen_transform = Transform.new({:x => 3, :y => -2}, {:x => 300, :y => 900})
 		@screen = Screen.new(screen_transform, self, @basis)
-		@screen.join=true
 		@screen.draw_axes(10,10)
 		stroke(1,1,0,1)
 		fill(1,1,0)
