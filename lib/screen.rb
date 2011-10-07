@@ -18,7 +18,6 @@ class Screen
 		@points = []
 		@data = []
 		@output = output
-		p output
 	end
 
 	def build
