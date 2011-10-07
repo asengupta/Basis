@@ -22,13 +22,19 @@ To use Basis functionality in your code, it is enough to:
 
 Here's some example code, which plots random points.
 
+	require 'rubygems'
+
+	Gem.clear_paths
+	ENV['GEM_HOME'] = '/home/avishek/jruby/jruby-1.6.4/lib/ruby/gems/1.8'
+	ENV['GEM_PATH'] = '/home/avishek/jruby/jruby-1.6.4/lib/ruby/gems/1.8'
+
 	require 'basis_processing'
 
 	class Demo < Processing::App
-		include Interactive
 		app = self
 		def setup
 			smooth
+			no_loop
 			background(0,0,0)
 			color_mode(RGB, 1.0)
 			stroke(1,1,0,1)
@@ -50,13 +56,13 @@ Here's some example code, which plots random points.
 			200.times {|n|points << {:x => n, :y => random(300)}}
 
 			x_basis_vector = {:x => 1.0, :y => 0.0}
-			y_basis_vector = {:x => 0.0, :y => 1.0}
+			y_basis_vector = {:x => 0.2, :y => 1.0}
 
 			x_range = ContinuousRange.new({:minimum => 0, :maximum => 200})
 			y_range = ContinuousRange.new({:minimum => 0, :maximum => 300})
 
-			@basis = CoordinateSystem.new(Axis.new(x_basis_vector,x_range), Axis.new(y_basis_vector,y_range), [[4,0],[0,2]], self)
-			screen_transform = SignedTransform.new({:x => 1, :y => -1}, {:x => 300, :y => 900})
+			@basis = CoordinateSystem.new(Axis.new(x_basis_vector,x_range), Axis.new(y_basis_vector,y_range), [[1,0],[0,1]], self)
+			screen_transform = Transform.new({:x => 3, :y => -2}, {:x => 300, :y => 900})
 			@screen = Screen.new(screen_transform, self, @basis)
 			@screen.join=true
 			@screen.draw_axes(10,10)
@@ -66,13 +72,13 @@ Here's some example code, which plots random points.
 			points.each do |p|
 				@screen.plot(p, :track => true) {|p| rect(p[:x], p[:y], 5, 5)}
 			end
-			@index = @screen.build
 		end
 	end
 
 	w = 1200
 	h = 1000
 
+	Demo.send :include, Interactive
 	Demo.new(:title => "My Sketch", :width => w, :height => h)
 
 You have a few options when plotting a point. If you specify ':bar => true', like the line below:
@@ -107,10 +113,8 @@ Experimental support exists for mouseover interactivity without (too much) extra
 
 To actually enable interactivity, you must do a few things:
 
-* 'include' the Interactive module in your sketch class, as in the demonstration code above.
-* Build the data sample index from the data, by calling `@index = @screen.build`.
+* 'include' the Interactive module in your sketch class, as in the demonstration code above, namely the line `Demo.send :include, Interactive`
 * `@highlight_block` specifies what to plot when the data point is hovered upon.
-* `@passive_block` specifies what to plot when the data point is **not** being hovered on.
 
 Interactivity is a work in progress at the moment; some of the above steps may change or be removed.
 

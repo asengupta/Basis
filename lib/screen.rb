@@ -1,5 +1,6 @@
 require 'transform'
 require 'knnball'
+require 'text_output'
 
 class Screen
 	attr_accessor :points
@@ -9,13 +10,15 @@ class Screen
 		@buffer = nil if !@should_join
 	end
 	
-	def initialize(transform, artist, basis)
+	def initialize(transform, artist, basis, output=TextOutput.new)
 		@transform = transform
 		@artist = artist
 		@basis = basis
 		join = false
 		@points = []
 		@data = []
+		@output = output
+		p output
 	end
 
 	def build
@@ -94,6 +97,10 @@ class Screen
 
 		draw_ticks(x_ticks, {:x => 0, :y => 20})
 		draw_ticks(y_ticks, {:x => -50, :y => 0})
+	end
+	
+	def write(p)
+		@output.notify(p)
 	end
 end
 

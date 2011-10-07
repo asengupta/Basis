@@ -29,6 +29,7 @@ module Interactive
 			return
 		end
 		@points_to_highlight = [closest]
+		@screen.write(closest)
 		redraw
 	end
 
