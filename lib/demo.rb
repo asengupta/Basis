@@ -7,7 +7,6 @@ ENV['GEM_PATH'] = '/home/avishek/jruby/jruby-1.6.4/lib/ruby/gems/1.8'
 require 'basis_processing'
 
 class Demo < Processing::App
-	include Interactive
 	app = self
 	def setup
 		smooth
@@ -48,12 +47,12 @@ class Demo < Processing::App
 		points.each do |p|
 			@screen.plot(p, :track => true) {|p| rect(p[:x], p[:y], 5, 5)}
 		end
-		@index = @screen.build
 	end
 end
 
 w = 1200
 h = 1000
 
+Demo.send :include, Interactive
 Demo.new(:title => "My Sketch", :width => w, :height => h)
 

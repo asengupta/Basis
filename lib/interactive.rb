@@ -1,6 +1,16 @@
 module Interactive
 	attr :screen, :basis, :index
-
+	def self.included(base)
+		base.class_eval do
+			alias :old_setup :setup
+			def setup
+				puts "LoL"
+				old_setup
+				@index = @screen.build
+			end
+		end
+	end
+	
 	def mouseMoved(p)
 		p = {:x => p.getX(), :y => p.getY()}
 		@old_points ||= []
