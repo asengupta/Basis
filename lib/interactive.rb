@@ -1,3 +1,5 @@
+require 'cache'
+
 module Interactive
 	attr :screen, :basis, :index
 	def self.included(base)
@@ -7,10 +9,11 @@ module Interactive
 				puts "LoL"
 				old_setup
 				@index = @screen.build
+				@cache = Cache.new(self).refresh
 			end
 		end
 	end
-	
+
 	def mouseMoved(p)
 		p = {:x => p.getX(), :y => p.getY()}
 		@old_points ||= []
@@ -33,9 +36,10 @@ module Interactive
 		@screen.join = false
 		@old_points ||= []
 		@points_to_highlight ||= []
-		@old_points.each do |old|
-			@screen.plot(old) {|p| @passive_block.call(p) if @passive_block}
-		end
+		@cache.restore if @old_points.count > 0
+#		@old_points.each do |old|
+#			@screen.plot(old) {|p| @passive_block.call(p) if @passive_block}
+#		end
 		@points_to_highlight.each do |new_rectangle|
 			@screen.plot(new_rectangle) {|p| @highlight_block.call(p) if @highlight_block}
 		end
