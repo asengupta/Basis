@@ -10,6 +10,7 @@ class Demo < Processing::App
 	app = self
 	def setup
 		smooth
+		no_loop
 		background(0,0,0)
 		color_mode(RGB, 1.0)
 		stroke(1,1,0,1)
