@@ -1,4 +1,4 @@
-**NOTE: Starting from version 0.5.1, Basis has been ported to Ruby 1.9.2, because of the kd-tree library dependency. There are no current plans of maintaining Basis compatibility with Ruby 1.8.x.**
+**NOTE: Starting from version 0.5.1, Basis has been ported to Ruby 1.9.2, because of the kd-tree library dependency. Currently, there are no plans of maintaining Basis compatibility with Ruby 1.8.x.**
 
 **Basis** provides a set of classes for easily plotting and transforming arbitrary 2D coordinate systems by specifying their basis vectors. Originally developed to work with Ruby-Processing, it now supports any class which supports Processing-like semantics.
 
