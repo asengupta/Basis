@@ -8,8 +8,9 @@ module Interactive
 		original_point = @screen.original(p)
 		closest_point = @index.nearest([original_point[:x], original_point[:y]])
 		closest = @screen.points[closest_point[:id]]
-		distance = (closest[:x] - original_point[:x])**2 + (closest[:y] - original_point[:y])**2
-		if distance > 1.0
+		closest_onscreen_point = @screen.transformed(closest)
+		distance = (closest_onscreen_point[:x] - p[:x])**2 + (closest_onscreen_point[:y] - p[:y])**2
+		if distance > 14.0
 			@points_to_highlight = []
 			redraw
 			return
