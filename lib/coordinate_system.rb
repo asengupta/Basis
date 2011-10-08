@@ -114,5 +114,20 @@ class CoordinateSystem
 		crosshair_y_p2 = (@y_basis_vector*(-CROSSHAIR_SCALE)) + standard_basis(p)
 		[{:from => crosshair_x_p1, :to => crosshair_x_p2}, {:from => crosshair_y_p1, :to => crosshair_y_p2}]
 	end
+	
+	def grid_lines(x_basis_interval, y_basis_interval)
+		lines = []
+		@x_axis.range.run(x_basis_interval) do |i,v|
+			hair_origin = standard_basis({:x => i, :y => 0})
+			hair_end = (@y_basis_vector*@y_axis.range.interval) + hair_origin
+			lines << {:from => hair_origin, :to => hair_end}
+		end
+		@y_axis.range.run(y_basis_interval) do |i,v|
+			hair_origin = standard_basis({:x => 0, :y => i})
+			hair_end = (@x_basis_vector*@x_axis.range.interval) + hair_origin
+			lines << {:from => hair_origin, :to => hair_end}
+		end
+		lines
+	end
 end
 

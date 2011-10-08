@@ -96,6 +96,12 @@ class Screen
 
 		draw_ticks(x_ticks, {:x => 0, :y => 20})
 		draw_ticks(y_ticks, {:x => -50, :y => 0})
+		
+		@artist.stroke(0.4, 1.0, 0.5, 0.2)
+		grid_lines = @basis.grid_lines(x_interval, y_interval).collect {|gl| {:from => @transform.apply(gl[:from]), :to => @transform.apply(gl[:to])}}
+		grid_lines.each do |l|
+			@artist.line(l[:from][:x],l[:from][:y],l[:to][:x],l[:to][:y])
+		end
 	end
 	
 	def write(p)

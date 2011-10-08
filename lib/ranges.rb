@@ -24,9 +24,12 @@ class ContinuousRange
 end
 
 class DiscreteRange
+	attr_accessor :minimum, :maximum
 	attr_accessor :values
 	def initialize(v)
 		@values = v[:values]
+		@minimum = @values.first
+		@maximum = @values.last
 	end
 
 	def interval
