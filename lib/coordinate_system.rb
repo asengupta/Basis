@@ -15,9 +15,21 @@ end
 
 class CoordinateSystem
 	CROSSHAIR_SCALE = 5000
+	UNIT_TRANSFORM = [[1,0],[0,1]]
+
 	include MatrixOperations
 	attr_accessor :x_basis_vector, :y_basis_vector
 
+	def self.standard(x_range, y_range, artist)
+		x_basis_vector = {:x => 1.0, :y => 0.0}
+		y_basis_vector = {:x => 0.0, :y => 1.0}
+
+		x_range = ContinuousRange.new(x_range)
+		y_range = ContinuousRange.new(y_range)
+
+		CoordinateSystem.new(Axis.new(x_basis_vector,x_range), Axis.new(y_basis_vector,y_range), UNIT_TRANSFORM, artist)
+	end
+	
 	def initialize(x_axis, y_axis, transform, artist)
 		@artist = artist
 		@x_axis = x_axis

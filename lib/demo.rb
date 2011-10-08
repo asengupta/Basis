@@ -31,13 +31,7 @@ class Demo < Processing::App
 		points = []
 		200.times {|n|points << {:x => n, :y => random(300)}}
 
-		x_basis_vector = {:x => 1.0, :y => 0.0}
-		y_basis_vector = {:x => 0.2, :y => 1.0}
-
-		x_range = ContinuousRange.new({:minimum => 0, :maximum => 200})
-		y_range = ContinuousRange.new({:minimum => 0, :maximum => 300})
-
-		@basis = CoordinateSystem.new(Axis.new(x_basis_vector,x_range), Axis.new(y_basis_vector,y_range), [[1,0],[0,1]], self)
+		@basis = CoordinateSystem.standard({:minimum => 0, :maximum => 200}, {:minimum => 0, :maximum => 300}, self)
 		screen_transform = Transform.new({:x => 3, :y => -2}, {:x => 300, :y => 900})
 		@screen = Screen.new(screen_transform, self, @basis)
 		@screen.draw_axes(10,10)
