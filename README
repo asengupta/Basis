@@ -22,14 +22,14 @@ To use Basis functionality in your code, it is enough to:
 
 Here's some example code, which plots random points.
 
-	require 'rubygems'
+        require 'rubygems'
 
-	Gem.clear_paths
-	ENV['GEM_HOME'] = '/home/avishek/jruby/jruby-1.6.4/lib/ruby/gems/1.8'
-	ENV['GEM_PATH'] = '/home/avishek/jruby/jruby-1.6.4/lib/ruby/gems/1.8'
-
-	require 'basis_processing'
-
+        Gem.clear_paths
+        ENV['GEM_HOME'] = '/home/avishek/jruby/jruby-1.6.4/lib/ruby/gems/1.8'
+        ENV['GEM_PATH'] = '/home/avishek/jruby/jruby-1.6.4/lib/ruby/gems/1.8'
+        
+        require 'basis_processing'
+        
 	class Demo < Processing::App
 		app = self
 		def setup
@@ -45,26 +45,22 @@ Here's some example code, which plots random points.
 						rect(p[:x], p[:y], 5, 5)
 					   end
 
-			@passive_block = lambda do |p|
-						rect_mode(CENTER)
-						stroke(1,1,0,1)
-						fill(1,1,0)
-						rect(p[:x], p[:y], 5, 5)
-					   end
-
 			points = []
 			200.times {|n|points << {:x => n, :y => random(300)}}
 
-			x_basis_vector = {:x => 1.0, :y => 0.0}
-			y_basis_vector = {:x => 0.2, :y => 1.0}
+	#		Long-winded way of setting up a coordinate system explicitly
 
-			x_range = ContinuousRange.new({:minimum => 0, :maximum => 200})
-			y_range = ContinuousRange.new({:minimum => 0, :maximum => 300})
+	#		@x_unit_vector = {:x => 1.0, :y => 1.0}
+	#		@y_unit_vector = {:x => -1.0, :y => 1.0}
+	#		x_range = ContinuousRange.new({:minimum => 0, :maximum => 200})
+	#		y_range = ContinuousRange.new({:minimum => 0, :maximum => 300})
+	#		@basis = CoordinateSystem.new(Axis.new(@x_unit_vector,x_range), Axis.new(@y_unit_vector,y_range), [[1,0],[0,1]], self)
 
-			@basis = CoordinateSystem.new(Axis.new(x_basis_vector,x_range), Axis.new(y_basis_vector,y_range), [[1,0],[0,1]], self)
-			screen_transform = Transform.new({:x => 3, :y => -2}, {:x => 300, :y => 900})
+	#		Accomplish the above in a single line below...
+			@basis = CoordinateSystem.standard({:minimum => 0, :maximum => 200}, {:minimum => 0, :maximum => 300}, self)
+
+			screen_transform = Transform.new({:x => 2, :y => -2}, {:x => 300, :y => 900})
 			@screen = Screen.new(screen_transform, self, @basis)
-			@screen.join=true
 			@screen.draw_axes(10,10)
 			stroke(1,1,0,1)
 			fill(1,1,0)
@@ -72,6 +68,9 @@ Here's some example code, which plots random points.
 			points.each do |p|
 				@screen.plot(p, :track => true) {|p| rect(p[:x], p[:y], 5, 5)}
 			end
+		end
+	
+		def draw
 		end
 	end
 
@@ -86,8 +85,24 @@ You have a few options when plotting a point. If you specify ':bar => true', lik
 	screen.plot(p, basis, :bar => true) {|p| rect(p[:x], p[:y], 5, 5)}
 
 it will connect the point with the x-axis. If you omit `:bar => true` or don't specify any options, Basis will plot the points without connecting them to the X-axis.
+
 If you omit the block at the end of the call, Basis will plot the point using a circle. Use the block to customise how you wish to represent the point graphically.
+
 You can toggle the joining of the points with lines by setting the join attribute of Screen to on (joins points)/off (no joining). The default is false.
+
+## Convenience methods for setting up default CoordinateSystem
+
+If you're doing a simple plot, with standard basis vectors with no transformations, you can use the convenience method in CoordinateSystem to set up a default system.
+
+		@basis = CoordinateSystem.standard({:minimum => 0, :maximum => 200}, {:minimum => 0, :maximum => 300}, self)
+If you want more control over your transformations and/or are using custom (possibly non-perpendicular) basis vectors, you'll want to specify all of that explicitly. In the example below, we are setting up a CoordinateSystem with basis vectors (1,1) and (-1,1), with a nonuniform scaling transformation ((2,0),(0,3)).
+
+		@x_unit_vector = {:x => 1.0, :y => 1.0}
+		@y_unit_vector = {:x => -1.0, :y => 1.0}
+		x_range = ContinuousRange.new({:minimum => 0, :maximum => 200})
+		y_range = ContinuousRange.new({:minimum => 0, :maximum => 300})
+		@basis = CoordinateSystem.new(Axis.new(@x_unit_vector,x_range), Axis.new(@y_unit_vector,y_range), [[2,0],[0,3]], self)
+
 
 ## Running the Code (with extra notes for versions >= 0.5.1)
 
