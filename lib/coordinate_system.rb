@@ -27,10 +27,10 @@ class CoordinateSystem
 		x_range = ContinuousRange.new(x_range)
 		y_range = ContinuousRange.new(y_range)
 
-		CoordinateSystem.new(Axis.new(x_basis_vector,x_range), Axis.new(y_basis_vector,y_range), UNIT_TRANSFORM, artist)
+		CoordinateSystem.new(Axis.new(x_basis_vector,x_range), Axis.new(y_basis_vector,y_range), artist, UNIT_TRANSFORM)
 	end
 	
-	def initialize(x_axis, y_axis, transform, artist)
+	def initialize(x_axis, y_axis, artist, transform = UNIT_TRANSFORM)
 		@artist = artist
 		@x_axis = x_axis
 		@y_axis = y_axis
