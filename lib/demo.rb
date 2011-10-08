@@ -48,6 +48,9 @@ class Demo < Processing::App
 			@screen.plot(p, :track => true) {|p| rect(p[:x], p[:y], 5, 5)}
 		end
 	end
+	
+	def draw
+	end
 end
 
 w = 1200
