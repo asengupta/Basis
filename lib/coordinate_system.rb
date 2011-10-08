@@ -118,13 +118,15 @@ class CoordinateSystem
 	def grid_lines(x_basis_interval, y_basis_interval)
 		lines = []
 		@x_axis.range.run(x_basis_interval) do |i,v|
-			hair_origin = standard_basis({:x => i, :y => 0})
-			hair_end = (@y_basis_vector*@y_axis.range.interval) + hair_origin
+			raw_origin = {:x => i, :y => @y_axis.range.minimum}
+			hair_origin = standard_basis(raw_origin)
+			hair_end = standard_basis((@y_basis_vector*@y_axis.range.interval) + raw_origin)
 			lines << {:from => hair_origin, :to => hair_end}
 		end
 		@y_axis.range.run(y_basis_interval) do |i,v|
-			hair_origin = standard_basis({:x => 0, :y => i})
-			hair_end = (@x_basis_vector*@x_axis.range.interval) + hair_origin
+			raw_origin = {:x => @x_axis.range.minimum, :y => i}
+			hair_origin = standard_basis(raw_origin)
+			hair_end = standard_basis((@x_basis_vector*@x_axis.range.interval) + raw_origin)
 			lines << {:from => hair_origin, :to => hair_end}
 		end
 		lines
