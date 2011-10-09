@@ -38,6 +38,19 @@ class Screen
 		end
 	end
 
+	def at(point, &block)
+		if (!point[:x] || !point[:y])
+			@artist.reset_matrix
+			block.call(point, self) if block
+			return
+		end
+		p = transformed(point)
+		if (block)
+			@artist.reset_matrix
+			block.call(point, p, self)
+		else
+	end
+
 	def plot(point, options = {:bar => false, :track => false}, &block)
 		if (!point[:x] || !point[:y])
 			@artist.reset_matrix
@@ -55,8 +68,7 @@ class Screen
 			@artist.ellipse(p[:x], p[:y], 5, 5)
 		end
 		@artist.line(standard_x_axis_point[:x], standard_x_axis_point[:y], p[:x], p[:y]) if options[:bar]
-		return if !@should_join
-		@artist.line(@buffer[:x], @buffer[:y], p[:x], p[:y]) if @buffer
+		@artist.line(@buffer[:x], @buffer[:y], p[:x], p[:y]) if @should_join && @buffer
 		@buffer = p
 	end
 	
@@ -72,15 +84,11 @@ class Screen
 	end
 	
 	def transformed(data_point)
-#		standard_point = @basis.standard_basis(data_point)
-#		@transform.apply(standard_point)
 		transformed_p = @affine_transform.mult([data_point[:x], data_point[:y]].to_java(:float), nil)
 		{:x => transformed_p[0], :y => transformed_p[1]}
 	end
 
 	def original(onscreen_point)
-#		p = @transform.unapply(onscreen_point)
-#		@basis.original(p)
 		transformed_p = @inverse_affine_transform.mult([onscreen_point[:x], onscreen_point[:y]].to_java(:float), nil)
 		{:x => transformed_p[0], :y => transformed_p[1]}
 	end
