@@ -44,7 +44,8 @@ class Screen
 		p = transformed(point)
 		standard_x_axis_point = transformed({:x => point[:x], :y => 0})
 		if (block)
-			block.call(p)
+			@artist.reset_matrix
+			block.call(point, p, self)
 		else
 			@artist.ellipse(p[:x], p[:y], 5, 5)
 		end
@@ -53,13 +54,28 @@ class Screen
 		@artist.line(@buffer[:x], @buffer[:y], p[:x], p[:y]) if @buffer
 		@buffer = p
 	end
+	
+	def in_basis(&blk)
+		@artist.apply_matrix(@affine_transform)
+		blk.call
+		@artist.reset_matrix
+	end
 
+	def outside_basis(&blk)
+		@artist.reset_matrix
+		blk.call
+	end
+	
 	def transformed(data_point)
+#		standard_point = @basis.standard_basis(data_point)
+#		@transform.apply(standard_point)
 		transformed_p = @affine_transform.mult([data_point[:x], data_point[:y]].to_java(:float), nil)
 		{:x => transformed_p[0], :y => transformed_p[1]}
 	end
-	
+
 	def original(onscreen_point)
+#		p = @transform.unapply(onscreen_point)
+#		@basis.original(p)
 		transformed_p = @inverse_affine_transform.mult([onscreen_point[:x], onscreen_point[:y]].to_java(:float), nil)
 		{:x => transformed_p[0], :y => transformed_p[1]}
 	end

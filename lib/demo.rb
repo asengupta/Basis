@@ -14,11 +14,13 @@ class Demo < Processing::App
 		background(0,0,0)
 		color_mode(RGB, 1.0)
 		stroke(1,1,0,1)
-		@highlight_block = lambda do |p|
-					rect_mode(CENTER)
-					stroke(1,0,0)
-					fill(1,0,0)
-					rect(p[:x], p[:y], 5, 5)
+		@highlight_block = lambda do |original, mapped, s|
+					s.in_basis do
+						rect_mode(CENTER)
+						stroke(1,0,0)
+						fill(1,0,0)
+						rect(original[:x], original[:y], 3, 3)
+					end
 				   end
 
 		points = []
@@ -26,14 +28,14 @@ class Demo < Processing::App
 
 #		Long-winded way of setting up a coordinate system explicitly
 
-#		@x_unit_vector = {:x => 1.0, :y => 1.0}
-#		@y_unit_vector = {:x => -1.0, :y => 1.0}
-#		x_range = ContinuousRange.new({:minimum => 0, :maximum => 200})
-#		y_range = ContinuousRange.new({:minimum => 0, :maximum => 300})
-#		@basis = CoordinateSystem.new(Axis.new(@x_unit_vector,x_range), Axis.new(@y_unit_vector,y_range), [[1,0],[0,1]], self)
+		@x_unit_vector = {:x => 1.0, :y => 1.0}
+		@y_unit_vector = {:x => -1.0, :y => 1.0}
+		x_range = ContinuousRange.new({:minimum => 0, :maximum => 200})
+		y_range = ContinuousRange.new({:minimum => 0, :maximum => 300})
+		@basis = CoordinateSystem.new(Axis.new(@x_unit_vector,x_range), Axis.new(@y_unit_vector,y_range), self, [[1,0],[0,1]])
 
 #		Accomplish the above in a single line below...
-		@basis = CoordinateSystem.standard({:minimum => 0, :maximum => 200}, {:minimum => 0, :maximum => 300}, self)
+#		@basis = CoordinateSystem.standard({:minimum => 0, :maximum => 200}, {:minimum => 0, :maximum => 300}, self)
 
 		screen_transform = Transform.new({:x => 2, :y => -2}, {:x => 300, :y => 900})
 		@screen = Screen.new(screen_transform, self, @basis)
@@ -42,7 +44,11 @@ class Demo < Processing::App
 		fill(1,1,0)
 		rect_mode(CENTER)
 		points.each do |p|
-			@screen.plot(p, :track => true) {|p| rect(p[:x], p[:y], 5, 5)}
+			@screen.plot(p, :track => true) do |original, mapped, s|
+				s.in_basis do
+					rect(original[:x], original[:y], 5, 5)
+				end
+			end
 		end
 	end
 	

@@ -18,9 +18,9 @@ module Interactive
 				@old_points ||= []
 				@points_to_highlight ||= []
 				@cache.restore if @old_points.count > 0
-				@points_to_highlight.each do |new_rectangle|
-					@screen.plot(new_rectangle) {|p| @highlight_block.call(p) if @highlight_block}
-					@screen.draw_crosshairs(new_rectangle)
+				@points_to_highlight.each do |p|
+					@highlight_block.call(p[:original], p[:mapped], @screen) if @highlight_block
+					@screen.draw_crosshairs(p[:original])
 				end
 				@old_points = @points_to_highlight
 			end
@@ -42,7 +42,7 @@ module Interactive
 			redraw
 			return
 		end
-		@points_to_highlight = [closest]
+		@points_to_highlight = [{:original => closest, :mapped => closest_onscreen_point}]
 		@screen.write(closest)
 		redraw
 	end

@@ -120,13 +120,13 @@ class CoordinateSystem
 		@x_axis.range.run(x_basis_interval) do |i,v|
 			raw_origin = {:x => i, :y => @y_axis.range.minimum}
 			hair_origin = standard_basis(raw_origin)
-			hair_end = standard_basis((@y_basis_vector*@y_axis.range.interval) + raw_origin)
+			hair_end = @y_basis_vector*@y_axis.range.interval + standard_basis(raw_origin)
 			lines << {:from => hair_origin, :to => hair_end}
 		end
 		@y_axis.range.run(y_basis_interval) do |i,v|
 			raw_origin = {:x => @x_axis.range.minimum, :y => i}
 			hair_origin = standard_basis(raw_origin)
-			hair_end = standard_basis((@x_basis_vector*@x_axis.range.interval) + raw_origin)
+			hair_end = @x_basis_vector*@x_axis.range.interval + standard_basis(raw_origin)
 			lines << {:from => hair_origin, :to => hair_end}
 		end
 		lines
