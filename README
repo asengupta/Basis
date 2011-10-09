@@ -22,27 +22,29 @@ To use Basis functionality in your code, it is enough to:
 
 Here's some example code, which plots random points.
 
-        require 'rubygems'
+	require 'rubygems'
 
-        Gem.clear_paths
-        ENV['GEM_HOME'] = '/home/avishek/jruby/jruby-1.6.4/lib/ruby/gems/1.8'
-        ENV['GEM_PATH'] = '/home/avishek/jruby/jruby-1.6.4/lib/ruby/gems/1.8'
-        
-        require 'basis_processing'
-        
+	Gem.clear_paths
+	ENV['GEM_HOME'] = '/home/avishek/jruby/jruby-1.6.4/lib/ruby/gems/1.8'
+	ENV['GEM_PATH'] = '/home/avishek/jruby/jruby-1.6.4/lib/ruby/gems/1.8'
+
+	require 'basis_processing'
+
 	class Demo < Processing::App
 		app = self
 		def setup
-			smooth
+			render_mode(P2D)
 			no_loop
 			background(0,0,0)
 			color_mode(RGB, 1.0)
 			stroke(1,1,0,1)
-			@highlight_block = lambda do |p|
-						rect_mode(CENTER)
-						stroke(1,0,0)
-						fill(1,0,0)
-						rect(p[:x], p[:y], 5, 5)
+			@highlight_block = lambda do |original, mapped, s|
+						s.in_basis do
+							rect_mode(CENTER)
+							stroke(1,0,0)
+							fill(1,0,0)
+							rect(original[:x], original[:y], 3, 3)
+						end
 					   end
 
 			points = []
@@ -50,11 +52,11 @@ Here's some example code, which plots random points.
 
 	#		Long-winded way of setting up a coordinate system explicitly
 
-	#		@x_unit_vector = {:x => 1.0, :y => 1.0}
-	#		@y_unit_vector = {:x => -1.0, :y => 1.0}
+	#		@x_unit_vector = {:x => 1.0, :y => 0.0}
+	#		@y_unit_vector = {:x => 0.0, :y => 1.0}
 	#		x_range = ContinuousRange.new({:minimum => 0, :maximum => 200})
 	#		y_range = ContinuousRange.new({:minimum => 0, :maximum => 300})
-	#		@basis = CoordinateSystem.new(Axis.new(@x_unit_vector,x_range), Axis.new(@y_unit_vector,y_range), [[1,0],[0,1]], self)
+	#		@basis = CoordinateSystem.new(Axis.new(@x_unit_vector,x_range), Axis.new(@y_unit_vector,y_range), self, [[1,0],[0,1]])
 
 	#		Accomplish the above in a single line below...
 			@basis = CoordinateSystem.standard({:minimum => 0, :maximum => 200}, {:minimum => 0, :maximum => 300}, self)
@@ -66,7 +68,11 @@ Here's some example code, which plots random points.
 			fill(1,1,0)
 			rect_mode(CENTER)
 			points.each do |p|
-				@screen.plot(p, :track => true) {|p| rect(p[:x], p[:y], 5, 5)}
+				@screen.plot(p, :track => true) do |original, mapped, s|
+					s.in_basis do
+						rect(original[:x], original[:y], 3, 3)
+					end
+				end
 			end
 		end
 	
@@ -89,6 +95,93 @@ it will connect the point with the x-axis. If you omit `:bar => true` or don't s
 If you omit the block at the end of the call, Basis will plot the point using a circle. Use the block to customise how you wish to represent the point graphically.
 
 You can toggle the joining of the points with lines by setting the join attribute of Screen to on (joins points)/off (no joining). The default is false.
+
+You have more options for drawing objects on screen, either in the default basis (sans any transformation), or in the basis you've specified. If you're using your specified basis, all shapes you draw (rectangles, ellipses, etc.) will be draw as they'd appear in the custom basis.
+
+For example, in the code below, we are specifying that all our drawing (in this case, a filled rectangle) will be drawn using the basis specified while defining the Screen object.
+
+			@highlight_block = lambda do |original, mapped, s|
+						s.in_basis do
+							rect_mode(CENTER)
+							stroke(1,0,0)
+							fill(1,0,0)
+							rect(original[:x], original[:y], 3, 3)
+						end
+					   end
+
+Of course, in this case, the basis vectors are the standard ones, so you'll not really notice anything. But let's consider the follwing example.
+
+	require 'rubygems'
+
+	Gem.clear_paths
+	ENV['GEM_HOME'] = '/home/avishek/jruby/jruby-1.6.4/lib/ruby/gems/1.8'
+	ENV['GEM_PATH'] = '/home/avishek/jruby/jruby-1.6.4/lib/ruby/gems/1.8'
+
+	require 'basis_processing'
+
+	class Demo < Processing::App
+		app = self
+		def setup
+			render_mode(P2D)
+			no_loop
+			background(0,0,0)
+			color_mode(RGB, 1.0)
+			stroke(1,1,0,1)
+			@highlight_block = lambda do |original, mapped, s|
+						s.in_basis do
+							rect_mode(CENTER)
+							stroke(1,0,0)
+							fill(1,0,0)
+							rect(original[:x], original[:y], 3, 3)
+						end
+					   end
+
+			points = []
+			200.times {|n|points << {:x => n, :y => random(300)}}
+
+			@x_unit_vector = {:x => 1.0, :y => 1.0}
+			@y_unit_vector = {:x => -1.0, :y => 1.0}
+			x_range = ContinuousRange.new({:minimum => 0, :maximum => 200})
+			y_range = ContinuousRange.new({:minimum => 0, :maximum => 300})
+			@basis = CoordinateSystem.new(Axis.new(@x_unit_vector,x_range), Axis.new(@y_unit_vector,y_range), self, [[1,0],[0,1]])
+
+			screen_transform = Transform.new({:x => 2, :y => -2}, {:x => 300, :y => 900})
+			@screen = Screen.new(screen_transform, self, @basis)
+			@screen.draw_axes(10,10)
+			stroke(1,1,0,1)
+			fill(1,1,0)
+			rect_mode(CENTER)
+			points.each do |p|
+				@screen.plot(p, :track => true) do |original, mapped, s|
+					s.in_basis do
+						rect(original[:x], original[:y], 3, 3)
+					end
+				end
+			end
+		end
+	
+		def draw
+		end
+	end
+
+	w = 1200
+	h = 1000
+
+	Demo.send :include, Interactive
+	Demo.new(:title => "My Sketch", :width => w, :height => h)
+
+In the above code, the basis vectors are (1,1) and (-1,1). The @highlight_block is the same as in the previous example. But if you run the above example, the highlighted rectangle will also appear rotated. Contrast this with an alternate definition of @highlight_block, like so:
+
+		@highlight_block = lambda do |original, mapped, s|
+					s.outside_basis do
+						rect_mode(CENTER)
+						stroke(1,0,0)
+						fill(1,0,0)
+						rect(mapped[:x], mapped[:y], 3, 3)
+					end
+				   end
+
+This will draw the highlighted rectangle unrotated. You can make use of the in_basis() and the outside_basis() methods to use one or the other. The default is to draw it in the default, untransformed, basis. For your convenience, the first two parameters passed to your block will be the original, and the mapped points, respectively.
 
 ## Convenience methods for setting up default CoordinateSystem
 
