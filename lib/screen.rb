@@ -22,7 +22,8 @@ class Screen
 		@transform_matrix = [[@transform.scale[:x], 0],[0, @transform.scale[:y]]]
 		nhm = MatrixOperations::into2Dx2D(@transform_matrix, @basis.basis_matrix)
 		@affine_transform = PMatrix2D.new(nhm[0][0],nhm[0][1],@transform.origin[:x],nhm[1][0],nhm[1][1],@transform.origin[:y])
-		p @affine_transform.methods.inspect
+		@inverse_affine_transform = @affine_transform.get
+		@inverse_affine_transform.invert
 	end
 
 	def build
@@ -59,8 +60,8 @@ class Screen
 	end
 	
 	def original(onscreen_point)
-		p = @transform.unapply(onscreen_point)
-		@basis.original(p)
+		transformed_p = @inverse_affine_transform.mult([onscreen_point[:x], onscreen_point[:y]].to_java(:float), nil)
+		{:x => transformed_p[0], :y => transformed_p[1]}
 	end
 
 	def draw_ticks(ticks, displacement)
