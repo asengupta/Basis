@@ -19,7 +19,7 @@ class Demo < Processing::App
 						rect_mode(CENTER)
 						stroke(1,0,0)
 						fill(1,0,0)
-						rect(original[:x], original[:y], 3, 3)
+						rect(original[:x], original[:y], 6, 6)
 					end
 				   end
 
@@ -32,7 +32,7 @@ class Demo < Processing::App
 		y_range = ContinuousRange.new({:minimum => 0, :maximum => 300})
 		@basis = CoordinateSystem.new(Axis.new(@x_unit_vector,x_range), Axis.new(@y_unit_vector,y_range), self, [[1,0],[0,1]])
 
-		screen_transform = Transform.new({:x => 2, :y => -2}, {:x => 300, :y => 900})
+		screen_transform = Transform.new({:x => 2, :y => -2}, {:x => 600, :y => 1000})
 		@screen = Screen.new(screen_transform, self, @basis)
 		@screen.draw_axes(10,10)
 		stroke(1,1,0,1)

@@ -39,6 +39,11 @@ class Screen
 	end
 
 	def plot(point, options = {:bar => false, :track => false}, &block)
+		if (!point[:x] || !point[:y])
+			@artist.reset_matrix
+			block.call(point, self)
+			return
+		end
 		@points << point if options[:track]
 		@data << {:id => @points.count - 1, :point => [point[:x], point[:y]]}
 		p = transformed(point)

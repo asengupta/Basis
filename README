@@ -213,11 +213,19 @@ Additionally, starting with version 0.5.1, you will have to specify the environm
 
 `export JRUBY_OPTS=--1.9`
 
+## Renderer Compatibility
+
+Basis has been tested with the Java2D and the Processing2D renderer. The OpenGL render mode needs some more work, because the cache behaves strangely in this mode.
+
 ## Notes on Interactivity
 
 Experimental support exists for mouseover interactivity without (too much) extra effort on your part. To allow interactions to happen, you must specify ':track => true' while plotting a point, as in the line below:
 
-	@screen.plot(p, :track => true) {|p| rect(p[:x], p[:y], 5, 5)}
+			@screen.plot(p, :track => true) do |original, mapped, s|
+				s.in_basis do
+					rect(original[:x], original[:y], 3, 3)
+				end
+			end
 
 To actually enable interactivity, you must do a few things:
 
