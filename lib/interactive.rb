@@ -8,8 +8,8 @@ module Interactive
 			alias :old_draw :draw
 			def setup
 				old_setup
-				@index = @screen.build
 				@cache = Cache.new(self).refresh
+				@index = @screen.build
 			end
 			
 			def draw

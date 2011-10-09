@@ -9,7 +9,7 @@ require 'basis_processing'
 class Demo < Processing::App
 	app = self
 	def setup
-		smooth
+		render_mode(P2D)
 		no_loop
 		background(0,0,0)
 		color_mode(RGB, 1.0)

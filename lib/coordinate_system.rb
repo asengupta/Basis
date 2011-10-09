@@ -18,7 +18,7 @@ class CoordinateSystem
 	UNIT_TRANSFORM = [[1,0],[0,1]]
 
 	include MatrixOperations
-	attr_accessor :x_basis_vector, :y_basis_vector
+	attr_accessor :x_basis_vector, :y_basis_vector, :basis_matrix
 
 	def self.standard(x_range, y_range, artist)
 		x_basis_vector = {:x => 1.0, :y => 0.0}
