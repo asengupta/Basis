@@ -26,6 +26,14 @@ class Demo < Processing::App
 		points = []
 		200.times {|n|points << {:x => n, :y => random(300)}}
 
+#		Long-winded way of setting up a coordinate system explicitly
+
+#		@x_unit_vector = {:x => 1.0, :y => 0.0}
+#		@y_unit_vector = {:x => 0.0, :y => 1.0}
+#		x_range = ContinuousRange.new({:minimum => 0, :maximum => 200})
+#		y_range = ContinuousRange.new({:minimum => 0, :maximum => 300})
+#		@basis = CoordinateSystem.new(Axis.new(@x_unit_vector,x_range), Axis.new(@y_unit_vector,y_range), self, [[1,0],[0,1]])
+
 #		Accomplish the above in a single line below...
 		@basis = CoordinateSystem.standard({:minimum => 0, :maximum => 200}, {:minimum => 0, :maximum => 300}, self)
 
