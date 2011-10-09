@@ -96,7 +96,9 @@ If you omit the block at the end of the call, Basis will plot the point using a 
 
 You can toggle the joining of the points with lines by setting the join attribute of Screen to on (joins points)/off (no joining). The default is false.
 
-You have more options for drawing objects on screen, either in the default basis (sans any transformation), or in the basis you've specified. If you're using your specified basis, all shapes you draw (rectangles, ellipses, etc.) will be draw as they'd appear in the custom basis.
+## Plotting markers inside/outside your custom basis
+
+You now have more options for drawing markers for your data points on screen, either in the default basis (sans any transformation), or in the basis you've specified. If you're using your specified basis, all shapes you draw (rectangles, ellipses, etc.) will be draw as they'd appear in the custom basis.
 
 For example, in the code below, we are specifying that all our drawing (in this case, a filled rectangle) will be drawn using the basis specified while defining the Screen object.
 
@@ -182,6 +184,68 @@ In the above code, the basis vectors are (1,1) and (-1,1). The @highlight_block 
 				   end
 
 This will draw the highlighted rectangle unrotated. You can make use of the in_basis() and the outside_basis() methods to use one or the other. The default is to draw it in the default, untransformed, basis. For your convenience, the first two parameters passed to your block will be the original, and the mapped points, respectively.
+
+## Plotting objects which are not points
+
+Some graphical representations of data might require more than simply plotting a single point. For example, a box plot is a concise way of summarising the distribution of a dataset; it is drawn not as a single point, but as a combination of boxes and 'whiskers'. There is some support now in Basis to make this easier for you to do.
+Consider the following code:
+
+	require 'rubygems'
+	Gem.clear_paths
+	ENV['GEM_HOME'] = '/home/avishek/jruby/jruby-1.6.4/lib/ruby/gems/1.8'
+	ENV['GEM_PATH'] = '/home/avishek/jruby/jruby-1.6.4/lib/ruby/gems/1.8'
+
+	require 'basis_processing'
+
+	class BoxPlotSketch < Processing::App
+		def setup
+			@screen_height = 900
+			@width = width
+			@height = height
+			no_loop
+			smooth
+			background(0,0,0)
+			color_mode(HSB, 1.0)
+			box = {:minimum => 20, :maximum => 70, :q1 => 30, :q2 => 40, :q3 => 50}
+			@x_unit_vector = {:x => 1.0, :y => 0.0}
+			@y_unit_vector = {:x => 0.0, :y => 1.0}
+			@screen_transform = Transform.new({:x => 5.0, :y => -5.0}, {:x => @width/2, :y => @screen_height})
+			x_range = ContinuousRange.new({:minimum => 0.0, :maximum => 80.0})
+			y_range = ContinuousRange.new({:minimum => 0.0, :maximum => box[:maximum]})
+			@c = CoordinateSystem.new(Axis.new(@x_unit_vector,x_range), Axis.new(@y_unit_vector,y_range), self, [[1,0],[0,1]])
+			@screen = Screen.new(@screen_transform, self, @c)
+			stroke(0.3,1,1)
+			no_fill
+			position = 20
+			box_width = 20
+			whisker_width = 10
+			@screen.plot(box) do |o,s|
+				s.in_basis do
+					rect(position - box_width/2, o[:q1], box_width, o[:q2] - o[:q1])
+					rect(position - box_width/2, o[:q2], box_width, o[:q3] - o[:q2])
+					line(position, o[:q3], position, o[:maximum])
+					line(position, o[:q1], position, o[:minimum])
+					line(position - whisker_width/2, o[:minimum], position + whisker_width/2, o[:minimum])
+					line(position - whisker_width/2, o[:maximum], position + whisker_width/2, o[:maximum])
+				end
+			end
+		
+			@screen.draw_axes(10, 4)
+		end
+	end
+
+	h = 1000
+	w = 1400
+	BoxPlotSketch.new(:title => "Box Plot", :width => w, :height => h)
+
+The first interesting thing in the code above is that the box hash does not have any values for the keys :x, :y. In such a situation, where Basis cannot identify a valid point, it defers the entirety of the plotting to the block that is passed to plot(). If no block is specified, it does nothing else. At this point, it is not possible to interact with objects which are not points, like in the above example.
+
+The other interesting thing about the above code will become evident if we specify a different set of basis vectors like so:
+
+		@x_unit_vector = {:x => 1.0, :y => 0.15}
+		@y_unit_vector = {:x => 0.2, :y => 1.0}
+
+The box plot in this modified basis acquires the properties of skewness, rotation, etc. of the host coordinate system. This lets you get on with drawing the object without really worrying about the specific properties of the coordinate space you are plotting in.
 
 ## Convenience methods for setting up default CoordinateSystem
 

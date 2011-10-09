@@ -19,7 +19,7 @@ class BoxPlotSketch < Processing::App
 		@y_unit_vector = {:x => 0.2, :y => 1.0}
 		@screen_transform = Transform.new({:x => 5.0, :y => -5.0}, {:x => @width/2, :y => @screen_height})
 		x_range = ContinuousRange.new({:minimum => 0.0, :maximum => 80.0})
-		y_range = ContinuousRange.new({:minimum => 0.0, :maximum => box[:maximum]})
+		y_range = ContinuousRange.new({:minimum => 0.0, :maximum => 80.0})
 		@c = CoordinateSystem.new(Axis.new(@x_unit_vector,x_range), Axis.new(@y_unit_vector,y_range), self, [[1,0],[0,1]])
 		@screen = Screen.new(@screen_transform, self, @c)
 		stroke(0.3,1,1)
@@ -42,7 +42,7 @@ class BoxPlotSketch < Processing::App
 	end
 end
 
-h = 1000
-w = 1400
+h = 950
+w = 1000
 BoxPlotSketch.new(:title => "Box Plot", :width => w, :height => h)
 

@@ -41,7 +41,7 @@ class Screen
 	def plot(point, options = {:bar => false, :track => false}, &block)
 		if (!point[:x] || !point[:y])
 			@artist.reset_matrix
-			block.call(point, self)
+			block.call(point, self) if block
 			return
 		end
 		@points << point if options[:track]
