@@ -93,7 +93,7 @@ class Screen
 		{:x => transformed_p[0], :y => transformed_p[1]}
 	end
 
-	def draw_ticks(ticks, displacement)
+	def draw_ticks(ticks, displacement, block)
 		ticks.each do |l|
 			from = l[:from]
 			to = l[:to]
@@ -101,7 +101,7 @@ class Screen
 			to = {:x => from[:x] + tick_vector[:x], :y => from[:y] + tick_vector[:y]}
 			@artist.line(from[:x],from[:y],to[:x],to[:y])
 			@artist.fill(1)
-			@artist.text(l[:label], to[:x]+displacement[:x], to[:y]+displacement[:y])
+			@artist.text((block ? block.call(l[:label]) : l[:label]), to[:x]+displacement[:x], to[:y]+displacement[:y])
 		end
 	end
 
@@ -111,7 +111,7 @@ class Screen
 		{:x => 5*vector[:x]/magnitude, :y => 5*vector[:y]/magnitude}
 	end
 
-	def draw_axes(x_interval, y_interval)
+	def draw_axes(x_interval, y_interval, labelling_blocks = {})
 		f = @artist.createFont("Georgia", 24, true);
 		@artist.text_font(f,16)
 		axis_screen_transform = Transform.new({:x => 800, :y => -800}, @transform.origin)
@@ -129,8 +129,8 @@ class Screen
 		@artist.line(x_ticks.first[:from][:x],x_ticks.first[:from][:y],x_ticks.last[:from][:x],x_ticks.last[:from][:y])
 		@artist.line(y_ticks.first[:from][:x],y_ticks.first[:from][:y],y_ticks.last[:from][:x],y_ticks.last[:from][:y])
 
-		draw_ticks(x_ticks, {:x => 0, :y => 20})
-		draw_ticks(y_ticks, {:x => -50, :y => 0})
+		draw_ticks(x_ticks, {:x => 0, :y => 20}, labelling_blocks[:x])
+		draw_ticks(y_ticks, {:x => -50, :y => 0}, labelling_blocks[:y])
 		
 		@artist.stroke(0.4, 1.0, 0.5, 0.2)
 		grid_lines = @basis.grid_lines(x_interval, y_interval).collect {|gl| {:from => @transform.apply(gl[:from]), :to => @transform.apply(gl[:to])}}
