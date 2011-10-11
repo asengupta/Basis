@@ -3,6 +3,7 @@
 **Basis** provides a set of classes for easily plotting and transforming arbitrary 2D coordinate systems by specifying their basis vectors. Originally developed to work with Ruby-Processing, it now supports any class which supports Processing-like semantics.
 
 Starting from version 0.5.0, experimental support has been added for mouseover interactivity without (too much) extra effort on your part. This is still a work in progress, though.
+Starting from version 0.5.8, you can customise axis labels, draw arbitrary shapes/text/plot custom graphics at any point in your coordinate system. See below for more details.
 
 ## Installation
 
@@ -247,7 +248,17 @@ The other interesting thing about the above code will become evident if we speci
 
 The box plot in this modified basis acquires the properties of skewness, rotation, etc. of the host coordinate system. This lets you get on with drawing the object without really worrying about the specific properties of the coordinate space you are plotting in.
 
-## Convenience methods for setting up default CoordinateSystem
+The other variation you can use is the at() method of a Screen object. at() behaves like plot(), except that it never plots anything by itself, instead deferring full control to the block that you pass to it. Think of it as a simple way of accessing any point in your custom coordinate system, without having to perform any of the messy transformations yourself. So, for example, the following code fragment, puts some text at whichever point on screen corresponds to (some_x, some_y) in your custom basis.
+
+	@screen.at({:x => some_x, :y => some_y}) {|o,m,s| text(o[:y], m[:x] + 5, m[:y] + 14)}
+
+## Customising axis labels
+
+Starting from version 0.5.8, you can customise labels, if you pass two blocks to the draw_axes() method, one for the x-axis, the other for the y-axis. For example, in the fragment below, we're not outputting anything for the x-axis labels (returning an empty string), and converting the y-axis value to an integer.
+
+	@screen.draw_axes(10, 10, {:x => ->(p){''}, :y => ->(p){p.to_i}})
+
+## Convenience method for setting up default CoordinateSystem
 
 If you're doing a simple plot, with standard basis vectors with no transformations, you can use the convenience method in CoordinateSystem to set up a default system.
 
