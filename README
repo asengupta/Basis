@@ -1,9 +1,16 @@
+Please send bug reports to (avishek.sen.gupta at gmail.com)
+
 **NOTE: Starting from version 0.5.1, Basis has been ported to Ruby 1.9.2, because of the kd-tree library dependency. Currently, there are no plans of maintaining Basis compatibility with Ruby 1.8.x.**
 
 **Basis** provides a set of classes for easily plotting and transforming arbitrary 2D coordinate systems by specifying their basis vectors. Originally developed to work with Ruby-Processing, it now supports any class which supports Processing-like semantics.
 
-Starting from version 0.5.0, experimental support has been added for mouseover interactivity without (too much) extra effort on your part. This is still a work in progress, though.
-Starting from version 0.5.8, you can customise axis labels, draw arbitrary shapes/text/plot custom graphics at any point in your coordinate system. See below for more details.
+UPDATE: Starting from version 0.5.8, you can customise axis labels, draw arbitrary shapes/text/plot custom graphics at any point in your coordinate system. See below for more details.
+
+UPDATE: With version 0.5.7, experimental support has been added for drawing objects which aren’t points. Interactions with such objects is currently not supported. Additional support for drawing markers/highlighting in custom bases is now in.
+
+UPDATE: Starting from version 0.5.1, Basis has been ported to Ruby 1.9.2, because of the kd-tree library dependency. Currently, there are no plans of maintaining Basis compatibility with Ruby 1.8.x. As an aside, I personally recommend using RVM to manage the mess of Ruby/JRuby installations that you’re likely to have on your machine.
+
+UPDATE: Basis has hit version 0.5.0 with experimental support for mouseover interactivity. More work is incoming, but the demo code below is up-to-date, for now. Starting from version 0.5.0, experimental support has been added for mouseover interactivity without (too much) extra effort on your part. This is still a work in progress, though.
 
 ## Installation
 
