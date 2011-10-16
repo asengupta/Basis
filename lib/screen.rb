@@ -111,7 +111,7 @@ class Screen
 		{:x => 5*vector[:x]/magnitude, :y => 5*vector[:y]/magnitude}
 	end
 
-	def draw_axes(x_interval, y_interval, labelling_blocks = {})
+	def draw_axes(x_interval, y_interval, options = {})
 		f = @artist.createFont("Georgia", 24, true);
 		@artist.text_font(f,16)
 		axis_screen_transform = Transform.new({:x => 800, :y => -800}, @transform.origin)
@@ -129,10 +129,11 @@ class Screen
 		@artist.line(x_ticks.first[:from][:x],x_ticks.first[:from][:y],x_ticks.last[:from][:x],x_ticks.last[:from][:y])
 		@artist.line(y_ticks.first[:from][:x],y_ticks.first[:from][:y],y_ticks.last[:from][:x],y_ticks.last[:from][:y])
 
-		draw_ticks(x_ticks, {:x => 0, :y => 20}, labelling_blocks[:x])
-		draw_ticks(y_ticks, {:x => -50, :y => 0}, labelling_blocks[:y])
+		draw_ticks(x_ticks, {:x => 0, :y => 20}, options[:x])
+		draw_ticks(y_ticks, {:x => -50, :y => 0}, options[:y])
 		
 		@artist.stroke(0.4, 1.0, 0.5, 0.2)
+		return if !options[:gridlines].nil? && options[:gridlines] == false
 		grid_lines = @basis.grid_lines(x_interval, y_interval).collect {|gl| {:from => @transform.apply(gl[:from]), :to => @transform.apply(gl[:to])}}
 		grid_lines.each do |l|
 			@artist.line(l[:from][:x],l[:from][:y],l[:to][:x],l[:to][:y])

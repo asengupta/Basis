@@ -39,7 +39,7 @@ class Demo < Processing::App
 
 		screen_transform = Transform.new({:x => 2, :y => -2}, {:x => 300, :y => 900})
 		@screen = Screen.new(screen_transform, self, @basis)
-		@screen.draw_axes(10,10)
+		@screen.draw_axes(10,10, :gridlines => false)
 		stroke(1,1,0,1)
 		fill(1,1,0)
 		rect_mode(CENTER)
