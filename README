@@ -261,11 +261,15 @@ The other variation you can use is the at() method of a Screen object. at() beha
 
 	@screen.at({:x => some_x, :y => some_y}) {|o,m,s| text(o[:y], m[:x] + 5, m[:y] + 14)}
 
-## Customising axis labels
+## Axis drawing options
 
 Starting from version 0.5.8, you can customise labels, if you pass two blocks to the draw_axes() method, one for the x-axis, the other for the y-axis. For example, in the fragment below, we're not outputting anything for the x-axis labels (returning an empty string), and converting the y-axis value to an integer.
 
-	@screen.draw_axes(10, 10, {:x => ->(p){''}, :y => ->(p){p.to_i}})
+	@screen.draw_axes(10, 10, :x => ->(p){''}, :y => ->(p){p.to_i})
+
+Grid lines are drawn by default. To turn them off, set the :gridlines key to false in the call to draw_axes(), like so:
+
+	@screen.draw_axes(10, 10, :x => ->(p){''}, :y => ->(p){p.to_i}, :gridlines => false)
 
 ## Convenience method for setting up default CoordinateSystem
 
