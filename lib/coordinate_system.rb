@@ -1,7 +1,7 @@
 require 'ranges'
 require 'ruby-processing'
-require 'matrix_operations'
 require 'hash_vector'
+require 'matrix_extensions'
 
 include Math
 
@@ -34,27 +34,21 @@ class CoordinateSystem
 		@y_axis = y_axis
 		@x_basis_vector = x_axis.basis_vector
 		@y_basis_vector = y_axis.basis_vector
-		@basis_transform = transform
-		@basis_matrix = 
+		@basis_transform = Matrix.rows(transform)
+		@basis_matrix = Matrix.rows(
 				[
 					[@x_basis_vector[:x],@y_basis_vector[:x]],
 					[@x_basis_vector[:y],@y_basis_vector[:y]]
-				]
+				])
 
-		d = @basis_matrix[0][0]*@basis_matrix[1][1] - @basis_matrix[0][1]*@basis_matrix[1][0]
-		@inverse_basis = 
-				[
-					[@basis_matrix[1][1]/d, -@basis_matrix[0][1]/d],
-					[-@basis_matrix[1][0]/d, @basis_matrix[0][0]/d]
-				]
-
+		@inverse_basis = @basis_matrix.inverse
 		@standard_transform = @basis_matrix*@basis_transform*@inverse_basis
 	end
 
 	def tick_vectors
 		{
-			:x_tick_vector => rotation(-90)*@x_basis_vector,
-			:y_tick_vector => rotation(90)*@y_basis_vector
+			:x_tick_vector => (rotation(-90)*@x_basis_vector).as_hash,
+			:y_tick_vector => (rotation(90)*@y_basis_vector).as_hash
 		}
 	end
 
@@ -63,6 +57,7 @@ class CoordinateSystem
 		t_vectors = tick_vectors
 		@x_axis.range.run(x_basis_interval) do |i,v|
 			tick_origin = standard_basis({:x => i, :y => 0})
+			puts tick_origin.inspect
 			lines << {:label => v, :from => tick_origin, :to => tick_origin + t_vectors[:x_tick_vector]}
 		end
 		lines
@@ -80,29 +75,20 @@ class CoordinateSystem
 
 	def rotation(angle)
 		radians = angle * PI/180.0
-		[[cos(radians), -sin(radians)],[sin(radians),cos(radians)]]
+		Matrix.rows([[cos(radians), -sin(radians)],[sin(radians),cos(radians)]])
 	end
 
 
 	def standard_basis(point)
-		basis_matrix =
-		[
-			[@x_basis_vector[:x], @y_basis_vector[:x]],
-			[@x_basis_vector[:y], @y_basis_vector[:y]]
-		]
-		standard_point = basis_matrix* point
-
-		@standard_transform * standard_point
+		standard_point = @basis_matrix* point
+		r = @standard_transform * standard_point
+		{:x => r[0,0], :y => r[1,0]}
 	end
 
 	def original(onscreen_point)
 		p1 = @standard_transform.inverse * onscreen_point
-		basis_matrix =
-		[
-			[@x_basis_vector[:x], @y_basis_vector[:x]],
-			[@x_basis_vector[:y], @y_basis_vector[:y]]
-		]
-		basis_matrix.inverse* p1
+		o = @basis_matrix.inverse* p1
+		{:x => o[0][0], :y => o[1][0]}
 	end
 	
 	def crosshairs(p)

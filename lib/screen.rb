@@ -19,9 +19,9 @@ class Screen
 		@points = []
 		@data = []
 		@output = output
-		@transform_matrix = [[@transform.scale[:x], 0],[0, @transform.scale[:y]]]
+		@transform_matrix = Matrix.rows([[@transform.scale[:x], 0],[0, @transform.scale[:y]]])
 		nhm = @transform_matrix* @basis.basis_matrix
-		@affine_transform = PMatrix2D.new(nhm[0][0],nhm[0][1],@transform.origin[:x],nhm[1][0],nhm[1][1],@transform.origin[:y])
+		@affine_transform = PMatrix2D.new(nhm[0,0],nhm[0,1],@transform.origin[:x],nhm[1,0],nhm[1,1],@transform.origin[:y])
 		@inverse_affine_transform = @affine_transform.get
 		@inverse_affine_transform.invert
 	end
