@@ -16,8 +16,6 @@ end
 class CoordinateSystem
 	CROSSHAIR_SCALE = 5000
 	UNIT_TRANSFORM = [[1,0],[0,1]]
-
-	include MatrixOperations
 	attr_accessor :x_basis_vector, :y_basis_vector, :basis_matrix
 
 	def self.standard(x_range, y_range, artist)
@@ -50,13 +48,13 @@ class CoordinateSystem
 					[-@basis_matrix[1][0]/d, @basis_matrix[0][0]/d]
 				]
 
-		@standard_transform = MatrixOperations::into2Dx2D(MatrixOperations::into2Dx2D(@basis_matrix, @basis_transform), @inverse_basis)
+		@standard_transform = @basis_matrix*@basis_transform*@inverse_basis
 	end
 
 	def tick_vectors
 		{
-			:x_tick_vector => MatrixOperations::into2Dx1D(rotation(-90),@x_basis_vector),
-			:y_tick_vector => MatrixOperations::into2Dx1D(rotation(90),@y_basis_vector)
+			:x_tick_vector => rotation(-90)*@x_basis_vector,
+			:y_tick_vector => rotation(90)*@y_basis_vector
 		}
 	end
 
@@ -92,19 +90,19 @@ class CoordinateSystem
 			[@x_basis_vector[:x], @y_basis_vector[:x]],
 			[@x_basis_vector[:y], @y_basis_vector[:y]]
 		]
-		standard_point = MatrixOperations::into2Dx1D(basis_matrix, point)
+		standard_point = basis_matrix* point
 
-		MatrixOperations::into2Dx1D(@standard_transform, standard_point)
+		@standard_transform * standard_point
 	end
 
 	def original(onscreen_point)
-		p1 = MatrixOperations::into2Dx1D(MatrixOperations::inverse2D(@standard_transform), onscreen_point)
+		p1 = @standard_transform.inverse * onscreen_point
 		basis_matrix =
 		[
 			[@x_basis_vector[:x], @y_basis_vector[:x]],
 			[@x_basis_vector[:y], @y_basis_vector[:y]]
 		]
-		MatrixOperations::into2Dx1D(MatrixOperations::inverse2D(basis_matrix), p1)
+		basis_matrix.inverse* p1
 	end
 	
 	def crosshairs(p)
