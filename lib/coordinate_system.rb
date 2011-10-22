@@ -57,7 +57,6 @@ class CoordinateSystem
 		t_vectors = tick_vectors
 		@x_axis.range.run(x_basis_interval) do |i,v|
 			tick_origin = standard_basis({:x => i, :y => 0})
-			puts tick_origin.inspect
 			lines << {:label => v, :from => tick_origin, :to => tick_origin + t_vectors[:x_tick_vector]}
 		end
 		lines
