@@ -4,13 +4,15 @@ Please send bug reports to (avishek.sen.gupta at gmail.com)
 
 **Basis** provides a set of classes for easily plotting and transforming arbitrary 2D coordinate systems by specifying their basis vectors. Originally developed to work with Ruby-Processing, it now supports any class which supports Processing-like semantics.
 
-UPDATE: Starting from version 0.5.9, you can turn grid lines on or off. Additionally, the matrix operations implementation has been ported to use the Matrix class in Ruby's stdlib.
+**UPDATE:** Starting from version 0.6.0, Basis allows you to specify axis labels. Additionally, you can specify arrays of points instead of plotting points one at a time. When you do this, you can also specify a corresponding legend string, which will show up in a legend guide. See below for more details.
 
-UPDATE: Starting from version 0.5.8, you can customise axis labels, draw arbitrary shapes/text/plot custom graphics at any point in your coordinate system. See below for more details.
+**UPDATE:** Starting from version 0.5.9, you can turn grid lines on or off. Additionally, the matrix operations implementation has been ported to use the Matrix class in Ruby's stdlib.
 
-UPDATE: With version 0.5.7, experimental support has been added for drawing objects which aren’t points. Interactions with such objects is currently not supported. Additional support for drawing markers/highlighting in custom bases is now in.
+**UPDATE:** Starting from version 0.5.8, you can customise axis labels, draw arbitrary shapes/text/plot custom graphics at any point in your coordinate system. See below for more details.
 
-UPDATE: Starting from version 0.5.1, Basis has been ported to Ruby 1.9.2, because of the kd-tree library dependency. Currently, there are no plans of maintaining Basis compatibility with Ruby 1.8.x. As an aside, I personally recommend using RVM to manage the mess of Ruby/JRuby installations that you’re likely to have on your machine.
+**UPDATE:** With version 0.5.7, experimental support has been added for drawing objects which aren’t points. Interactions with such objects is currently not supported. Additional support for drawing markers/highlighting in custom bases is now in.
+
+**UPDATE:** Starting from version 0.5.1, Basis has been ported to Ruby 1.9.2, because of the kd-tree library dependency. Currently, there are no plans of maintaining Basis compatibility with Ruby 1.8.x. As an aside, I personally recommend using RVM to manage the mess of Ruby/JRuby installations that you’re likely to have on your machine.
 
 UPDATE: Basis has hit version 0.5.0 with experimental support for mouseover interactivity. More work is incoming, but the demo code below is up-to-date, for now. Starting from version 0.5.0, experimental support has been added for mouseover interactivity without (too much) extra effort on your part. This is still a work in progress, though.
 
@@ -95,6 +97,18 @@ Here's some example code, which plots random points.
 
 	Demo.send :include, Interactive
 	Demo.new(:title => "My Sketch", :width => w, :height => h)
+
+You may choose to plot each point individually, as in the example above. However, you could have achieved the same thing by writing the following directly.
+
+		@screen.plot(points, :legend => 'Some Distribution', :track => true) do |original, mapped, s|
+			s.in_basis do
+				rect(original[:x], original[:y], 3, 3)
+			end
+		end
+
+If you choose this route, you can specify a legend, as shown above. This will show up in a legend guide at a default position. You can customise the positioning of the legend box, while creating the Screen object, like so:
+
+		@screen = Screen.new(screen_transform, self, @basis, LegendBox.new(self, {:x => 1300, :y => 30}))
 
 You have a few options when plotting a point. If you specify ':bar => true', like the line below:
 
@@ -217,8 +231,8 @@ Consider the following code:
 			background(0,0,0)
 			color_mode(HSB, 1.0)
 			box = {:minimum => 20, :maximum => 70, :q1 => 30, :q2 => 40, :q3 => 50}
-			@x_unit_vector = {:x => 1.0, :y => 0.0}
-			@y_unit_vector = {:x => 0.0, :y => 1.0}
+			@x_unit_vector = {:x => 1.0, :y => 0.15, :legend => 'x-axis'}
+			@y_unit_vector = {:x => 0.2, :y => 1.0, :legend => 'y-axis'}
 			@screen_transform = Transform.new({:x => 5.0, :y => -5.0}, {:x => @width/2, :y => @screen_height})
 			x_range = ContinuousRange.new({:minimum => 0.0, :maximum => 80.0})
 			y_range = ContinuousRange.new({:minimum => 0.0, :maximum => box[:maximum]})
@@ -252,8 +266,10 @@ The first interesting thing in the code above is that the box hash does not have
 
 The other interesting thing about the above code will become evident if we specify a different set of basis vectors like so:
 
-		@x_unit_vector = {:x => 1.0, :y => 0.15}
-		@y_unit_vector = {:x => 0.2, :y => 1.0}
+		@x_unit_vector = {:x => 1.0, :y => 0.15, :label => 'x-axis'}
+		@y_unit_vector = {:x => 0.2, :y => 1.0, :label => 'y-axis'}
+
+Specifying the :label key is optional, Basis will generate its own legends if you don't specify anything.
 
 The box plot in this modified basis acquires the properties of skewness, rotation, etc. of the host coordinate system. This lets you get on with drawing the object without really worrying about the specific properties of the coordinate space you are plotting in.
 
@@ -263,6 +279,17 @@ The other variation you can use is the at() method of a Screen object. at() beha
 
 ## Axis drawing options
 
+Starting from version 0.6.0, you can specify the axis labels. There are two ways to do this. If you're explicitly specifying your own basis vectors, you can specify the labels there, like so:
+
+		@x_unit_vector = {:x => 1.0, :y => 0.15, :label => 'x-axis'}
+		@y_unit_vector = {:x => 0.2, :y => 1.0, :label => 'y-axis'}
+
+If you're using the convenience method to initialise the standard CoordinateSystem, you can specify the labels like so:
+
+		@c = CoordinateSystem.standard(x_range, y_range, self, {:x => 'Score', :y => 'Probability P(score)'})
+
+In the code above, :x maps to 'Score' for the x-axis, and :y maps to 'Probability P(score)' for the y-axis.
+
 Starting from version 0.5.8, you can customise labels, if you pass two blocks to the draw_axes() method, one for the x-axis, the other for the y-axis. For example, in the fragment below, we're not outputting anything for the x-axis labels (returning an empty string), and converting the y-axis value to an integer.
 
 	@screen.draw_axes(10, 10, :x => ->(p){''}, :y => ->(p){p.to_i})
@@ -271,7 +298,7 @@ Grid lines are drawn by default. To turn them off, set the :gridlines key to fal
 
 	@screen.draw_axes(10, 10, :x => ->(p){''}, :y => ->(p){p.to_i}, :gridlines => false)
 
-## Convenience method for setting up default CoordinateSystem
+## The default CoordinateSystem
 
 If you're doing a simple plot, with standard basis vectors with no transformations, you can use the convenience method in CoordinateSystem to set up a default system.
 
