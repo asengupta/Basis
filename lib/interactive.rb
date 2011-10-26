@@ -6,6 +6,7 @@ module Interactive
 		base.class_eval do
 			alias :old_setup :setup
 			alias :old_draw :draw
+			
 			def setup
 				old_setup
 				@cache = Cache.new(self).refresh

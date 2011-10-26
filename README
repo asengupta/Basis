@@ -4,7 +4,7 @@ Please send bug reports to (avishek.sen.gupta at gmail.com)
 
 **Basis** provides a set of classes for easily plotting and transforming arbitrary 2D coordinate systems by specifying their basis vectors. Originally developed to work with Ruby-Processing, it now supports any class which supports Processing-like semantics.
 
-UPDATE: Starting from version 0.5.9, you can turn grid lines on or off.
+UPDATE: Starting from version 0.5.9, you can turn grid lines on or off. Additionally, the matrix operations implementation has been ported to use the Matrix class in Ruby's stdlib.
 
 UPDATE: Starting from version 0.5.8, you can customise axis labels, draw arbitrary shapes/text/plot custom graphics at any point in your coordinate system. See below for more details.
 

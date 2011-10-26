@@ -1,6 +1,7 @@
 require 'transform'
 require 'knnball'
 require 'text_output'
+require 'legend_box'
 
 class Screen
 	attr_accessor :points
@@ -24,6 +25,7 @@ class Screen
 		@affine_transform = PMatrix2D.new(nhm[0,0],nhm[0,1],@transform.origin[:x],nhm[1,0],nhm[1,1],@transform.origin[:y])
 		@inverse_affine_transform = @affine_transform.get
 		@inverse_affine_transform.invert
+		@legend_box = LegendBox.new(artist)
 	end
 
 	def build
@@ -51,7 +53,19 @@ class Screen
 		end
 	end
 
-	def plot(point, options = {:bar => false, :track => false}, &block)
+	def plot(points, options = {:bar => false, :track => false, :legend => ''}, &block)
+		if points.kind_of? Array
+			points.each {|p| plot_single(p, options, &block)}
+		else
+			plot_single(points, options, &block)
+		end
+		return if options[:legend].nil?
+		outside_basis do
+			@legend_box.draw(options[:legend])
+		end
+	end
+
+	def plot_single(point, options = {:bar => false, :track => false}, &block)
 		if (!point[:x] || !point[:y])
 			@artist.reset_matrix
 			block.call(point, self) if block
@@ -143,5 +157,7 @@ class Screen
 	def write(p)
 		@output.notify(p)
 	end
+
+	private :draw_ticks, :normal, :plot_single
 end
 
