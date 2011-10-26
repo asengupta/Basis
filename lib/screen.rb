@@ -12,7 +12,8 @@ class Screen
 		@buffer = nil if !@should_join
 	end
 	
-	def initialize(transform, artist, basis, output=TextOutput.new)
+	def initialize(transform, artist, basis, legend_box=LegendBox.new(artist), output=TextOutput.new)
+		@legend_box = legend_box
 		@transform = transform
 		@artist = artist
 		@basis = basis
@@ -25,7 +26,6 @@ class Screen
 		@affine_transform = PMatrix2D.new(nhm[0,0],nhm[0,1],@transform.origin[:x],nhm[1,0],nhm[1,1],@transform.origin[:y])
 		@inverse_affine_transform = @affine_transform.get
 		@inverse_affine_transform.invert
-		@legend_box = LegendBox.new(artist)
 	end
 
 	def build

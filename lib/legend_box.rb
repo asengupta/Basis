@@ -1,12 +1,13 @@
 class LegendBox
-	def initialize(artist)
-		@y = 30
+	def initialize(artist, top_left = {:x => 20, :y => 20})
+		@x = top_left[:x]
+		@y = top_left[:y]
 		@artist = artist
 	end
 
 	def draw(legend)
-		@artist.rect(30,@y,10,10)
-		@artist.text(legend, 50, @y)
+		@artist.rect(@x,@y,10,10)
+		@artist.text(legend, @x + 50, @y)
 		@y += 15
 	end
 end
