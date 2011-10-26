@@ -35,7 +35,7 @@ class Demo < Processing::App
 #		@basis = CoordinateSystem.new(Axis.new(@x_unit_vector,x_range), Axis.new(@y_unit_vector,y_range), self, [[1,0],[0,1]])
 
 #		Accomplish the above in a single line below...
-		@basis = CoordinateSystem.standard({:minimum => 0, :maximum => 200}, {:minimum => 0, :maximum => 300}, self, {:x => "Wattaf", :y => "Lololol"})
+		@basis = CoordinateSystem.standard({:minimum => 0, :maximum => 200}, {:minimum => 0, :maximum => 300}, self, {:x => "X-Axis", :y => "Y-Axis"})
 
 		screen_transform = Transform.new({:x => 2, :y => -2}, {:x => 300, :y => 900})
 		@screen = Screen.new(screen_transform, self, @basis)
