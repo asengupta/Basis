@@ -143,6 +143,19 @@ class Screen
 		@artist.line(x_ticks.first[:from][:x],x_ticks.first[:from][:y],x_ticks.last[:from][:x],x_ticks.last[:from][:y])
 		@artist.line(y_ticks.first[:from][:x],y_ticks.first[:from][:y],y_ticks.last[:from][:x],y_ticks.last[:from][:y])
 
+		x_axis_label_position = {:x => (x_ticks.first[:from][:x] + x_ticks.last[:to][:x])/2, :y => (x_ticks.first[:from][:y] + x_ticks.last[:to][:y])/2 + 80}
+		y_axis_label_position = {:x => (y_ticks.first[:from][:x] + y_ticks.last[:to][:x])/2 - 80, :y => (y_ticks.first[:from][:y] + y_ticks.last[:to][:y])/2}
+		
+		@artist.translate(x_axis_label_position[:x], x_axis_label_position[:y])
+		@artist.rotate(2*Math::PI - Math.atan2(@basis.x_basis_vector[:y], @basis.x_basis_vector[:x]))
+		@artist.text(@basis.x_basis_vector[:label], 0, 0)
+		@artist.reset_matrix
+
+		@artist.translate(y_axis_label_position[:x], y_axis_label_position[:y])
+		@artist.rotate(2*Math::PI - Math.atan2(@basis.y_basis_vector[:y], @basis.y_basis_vector[:x]))
+		@artist.text(@basis.y_basis_vector[:label], 0, 0)
+		@artist.reset_matrix
+		
 		draw_ticks(x_ticks, {:x => 0, :y => 20}, options[:x])
 		draw_ticks(y_ticks, {:x => -50, :y => 0}, options[:y])
 		

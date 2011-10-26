@@ -7,7 +7,7 @@ class LegendBox
 
 	def draw(legend)
 		@artist.rect(@x,@y,10,10)
-		@artist.text(legend, @x + 50, @y)
+		@artist.text(legend.strip == '' ? '[Unknown]' : legend, @x + 50, @y)
 		@y += 15
 	end
 end

@@ -43,7 +43,7 @@ class Demo < Processing::App
 		stroke(1,1,0,1)
 		fill(1,1,0)
 		rect_mode(CENTER)
-		@screen.plot(points, :track => true, :legend => "Legend") do |original, mapped, s|
+		@screen.plot(points, :track => true) do |original, mapped, s|
 			s.in_basis do
 				rect(original[:x], original[:y], 3, 3)
 			end

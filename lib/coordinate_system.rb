@@ -18,9 +18,9 @@ class CoordinateSystem
 	UNIT_TRANSFORM = [[1,0],[0,1]]
 	attr_accessor :x_basis_vector, :y_basis_vector, :basis_matrix
 
-	def self.standard(x_range, y_range, artist)
-		x_basis_vector = {:x => 1.0, :y => 0.0}
-		y_basis_vector = {:x => 0.0, :y => 1.0}
+	def self.standard(x_range, y_range, artist, labels = {:x => 'x', :y => 'y'})
+		x_basis_vector = {:x => 1.0, :y => 0.0, :label => labels[:x]}
+		y_basis_vector = {:x => 0.0, :y => 1.0, :label => labels[:y]}
 
 		x_range = ContinuousRange.new(x_range)
 		y_range = ContinuousRange.new(y_range)
