@@ -53,7 +53,7 @@ class Screen
 		end
 	end
 
-	def plot(points, options = {:bar => false, :track => false, :legend => ''}, &block)
+	def plot(points, options = {:bar => false, :track => false, :legend => nil}, &block)
 		if points.kind_of? Array
 			points.each {|p| plot_single(p, options, &block)}
 		else
