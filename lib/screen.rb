@@ -40,6 +40,13 @@ class Screen
 		end
 	end
 
+	def joined(should_join)
+		self.join = false
+		self.join = true
+		yield
+		self.join = false
+	end
+
 	def at(point, &block)
 		if (!point[:x] || !point[:y])
 			@artist.reset_matrix
