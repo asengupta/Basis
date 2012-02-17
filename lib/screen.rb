@@ -42,7 +42,7 @@ class Screen
 
 	def joined(should_join)
 		self.join = false
-		self.join = true
+		self.join = should_join
 		yield
 		self.join = false
 	end
@@ -156,13 +156,14 @@ class Screen
 		@artist.push_matrix
 		@artist.translate(x_axis_label_position[:x], x_axis_label_position[:y])
 		@artist.rotate(2*Math::PI - Math.atan2(@basis.x_basis_vector[:y], @basis.x_basis_vector[:x]))
-		@artist.text(@basis.x_basis_vector[:label], 0, 0)
+		puts "It is: #{@basis.x_basis_vector[:label]}"
+		@artist.text(@basis.x_basis_vector[:label], 0, 0) if !@basis.x_basis_vector[:label].nil?
 		@artist.pop_matrix
 
 		@artist.push_matrix
 		@artist.translate(y_axis_label_position[:x], y_axis_label_position[:y])
 		@artist.rotate(2*Math::PI - Math.atan2(@basis.y_basis_vector[:y], @basis.y_basis_vector[:x]))
-		@artist.text(@basis.y_basis_vector[:label], 0, 0)
+		@artist.text(@basis.y_basis_vector[:label], 0, 0) if !@basis.y_basis_vector[:label].nil?
 		@artist.pop_matrix
 		
 		draw_ticks(x_ticks, {:x => 0, :y => 20}, options[:x])

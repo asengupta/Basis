@@ -1,7 +1,7 @@
 require 'cache'
 
 module Interactive
-	attr :screen, :basis, :index
+	attr_accessor :screen, :basis, :index
 	def self.included(base)
 		base.class_eval do
 			alias :old_setup :setup
