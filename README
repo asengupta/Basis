@@ -1,3 +1,5 @@
+Basis provides a set of classes for easily plotting and transforming arbitrary 2D coordinate systems by specifying their basis vectors in Ruby-Processing.
+
 Please send bug reports to (avishek.sen.gupta at gmail.com)
 
 **NOTE: Starting from version 0.5.1, Basis has been ported to Ruby 1.9.2, because of the kd-tree library dependency. Currently, there are no plans of maintaining Basis compatibility with Ruby 1.8.x.**
